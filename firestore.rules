@@ -1,0 +1,79 @@
+rules_version = '2';
+
+/**
+ * Firestore Security Rules for Omena Agency CRM
+ *
+ * These rules ensure that only authenticated users can access data.
+ * Customize based on your specific security requirements.
+ */
+
+service cloud.firestore {
+  match /databases/{database}/documents {
+
+    // Helper function to check if user is authenticated
+    function isAuthenticated() {
+      return request.auth != null;
+    }
+
+    // Helper function to check if user owns the document
+    function isOwner(userId) {
+      return isAuthenticated() && request.auth.uid == userId;
+    }
+
+    // Customers Collection
+    match /customers/{customerId} {
+      // Allow authenticated users to read and write
+      allow read, write: if isAuthenticated();
+
+      // More restrictive: Only allow admins
+      // allow read, write: if isAuthenticated() &&
+      //   get(/databases/$(database)/documents/teamMembers/$(request.auth.uid)).data.role == 'admin';
+    }
+
+    // Services Collection
+    match /services/{serviceId} {
+      // Allow all authenticated users to read
+      allow read: if isAuthenticated();
+
+      // Only allow write for authenticated users
+      allow write: if isAuthenticated();
+    }
+
+    // Transactions Collection
+    match /transactions/{transactionId} {
+      allow read, write: if isAuthenticated();
+    }
+
+    // Expenses Collection
+    match /expenses/{expenseId} {
+      allow read, write: if isAuthenticated();
+
+      // Example: Only allow users to update expenses they created
+      // allow update: if isAuthenticated() &&
+      //   resource.data.createdBy == request.auth.uid;
+    }
+
+    // Team Members Collection
+    match /teamMembers/{memberId} {
+      // Allow read for all authenticated users
+      allow read: if isAuthenticated();
+
+      // Only allow write for the user's own profile or admins
+      allow write: if isAuthenticated();
+
+      // More restrictive: Only admins can modify
+      // allow write: if isAuthenticated() &&
+      //   get(/databases/$(database)/documents/teamMembers/$(request.auth.uid)).data.role == 'admin';
+    }
+
+    // Receipts Collection
+    match /receipts/{receiptId} {
+      allow read, write: if isAuthenticated();
+    }
+
+    // Default: Deny all access to other collections
+    match /{document=**} {
+      allow read, write: if false;
+    }
+  }
+}

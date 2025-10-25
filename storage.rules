@@ -1,0 +1,80 @@
+rules_version = '2';
+
+/**
+ * Firebase Storage Security Rules for Omena Agency CRM
+ *
+ * Controls access to uploaded files (receipts, avatars, documents).
+ */
+
+service firebase.storage {
+  match /b/{bucket}/o {
+
+    // Helper function to check if user is authenticated
+    function isAuthenticated() {
+      return request.auth != null;
+    }
+
+    // Helper function to check file size (in MB)
+    function isValidSize(maxSizeMB) {
+      return request.resource.size < maxSizeMB * 1024 * 1024;
+    }
+
+    // Helper function to check if file is an image
+    function isImage() {
+      return request.resource.contentType.matches('image/.*');
+    }
+
+    // Helper function to check if file is a PDF
+    function isPDF() {
+      return request.resource.contentType == 'application/pdf';
+    }
+
+    // Receipts folder
+    match /receipts/{receiptFile} {
+      // Allow authenticated users to read and write
+      // Max file size: 10MB
+      // Allowed types: PDF and images
+      allow read: if isAuthenticated();
+      allow write: if isAuthenticated() &&
+                      isValidSize(10) &&
+                      (isPDF() || isImage());
+    }
+
+    // Expenses folder
+    match /expenses/{expenseFile} {
+      // Allow authenticated users to upload expense receipts
+      // Max file size: 10MB
+      // Allowed types: PDF and images
+      allow read: if isAuthenticated();
+      allow write: if isAuthenticated() &&
+                      isValidSize(10) &&
+                      (isPDF() || isImage());
+    }
+
+    // Avatars folder
+    match /avatars/{avatarFile} {
+      // Allow authenticated users to read all avatars
+      allow read: if isAuthenticated();
+
+      // Only allow image uploads
+      // Max file size: 5MB
+      allow write: if isAuthenticated() &&
+                      isValidSize(5) &&
+                      isImage();
+    }
+
+    // Documents folder
+    match /documents/{documentFile} {
+      // Allow authenticated users to read and write documents
+      // Max file size: 20MB
+      allow read: if isAuthenticated();
+      allow write: if isAuthenticated() &&
+                      isValidSize(20);
+    }
+
+    // Default: Deny all access to other paths
+    match /{allPaths=**} {
+      allow read, write: if false;
+    }
+  }
+}

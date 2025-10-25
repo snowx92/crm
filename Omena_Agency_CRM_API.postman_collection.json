@@ -1,0 +1,2500 @@
+{
+  "info": {
+    "name": "Omena Agency CRM API - Complete Collection",
+    "description": "Complete API collection for Omena Agency CRM with Express backend and Firebase. Includes Authentication, Customers, Services, Transactions, Expenses, Team Members, and Receipts.",
+    "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json",
+    "version": "4.0.0"
+  },
+  "variable": [
+    {
+      "key": "baseUrl",
+      "value": "http://localhost:5000/api/v1",
+      "type": "string"
+    },
+    {
+      "key": "authToken",
+      "value": "",
+      "type": "string"
+    },
+    {
+      "key": "customToken",
+      "value": "",
+      "type": "string"
+    },
+    {
+      "key": "userId",
+      "value": "",
+      "type": "string"
+    },
+    {
+      "key": "customerId",
+      "value": "",
+      "type": "string"
+    },
+    {
+      "key": "serviceId",
+      "value": "",
+      "type": "string"
+    },
+    {
+      "key": "transactionId",
+      "value": "",
+      "type": "string"
+    },
+    {
+      "key": "expenseId",
+      "value": "",
+      "type": "string"
+    },
+    {
+      "key": "teamMemberId",
+      "value": "",
+      "type": "string"
+    },
+    {
+      "key": "receiptId",
+      "value": "",
+      "type": "string"
+    }
+  ],
+  "item": [
+    {
+      "name": "Server Health",
+      "item": [
+        {
+          "name": "Health Check",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "http://localhost:5000/health",
+              "protocol": "http",
+              "host": ["localhost"],
+              "port": "5000",
+              "path": ["health"]
+            },
+            "description": "Check if backend server is running"
+          },
+          "response": [
+            {
+              "name": "Success Response",
+              "originalRequest": {
+                "method": "GET",
+                "header": [],
+                "url": {
+                  "raw": "http://localhost:5000/health",
+                  "protocol": "http",
+                  "host": ["localhost"],
+                  "port": "5000",
+                  "path": ["health"]
+                }
+              },
+              "status": "OK",
+              "code": 200,
+              "_postman_previewlanguage": "json",
+              "header": [
+                {
+                  "key": "Content-Type",
+                  "value": "application/json"
+                }
+              ],
+              "body": "{\n  \"status\": \"ok\",\n  \"message\": \"Server is running\",\n  \"timestamp\": \"2024-01-15T10:30:00.000Z\"\n}"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "name": "Authentication",
+      "description": "Backend authentication endpoints using Firebase Admin SDK",
+      "item": [
+        {
+          "name": "Signup",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "if (pm.response.code === 201) {",
+                  "    const response = pm.response.json();",
+                  "    if (response.success && response.data) {",
+                  "        pm.collectionVariables.set('customToken', response.data.customToken);",
+                  "        pm.collectionVariables.set('userId', response.data.uid);",
+                  "        console.log('✅ Custom token saved:', response.data.customToken.substring(0, 20) + '...');",
+                  "        console.log('✅ User ID saved:', response.data.uid);",
+                  "    }",
+                  "}"
+                ],
+                "type": "text/javascript"
+              }
+            }
+          ],
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"email\": \"john.doe@omena.com\",\n  \"password\": \"SecurePassword123\",\n  \"firstName\": \"John\",\n  \"lastName\": \"Doe\",\n  \"phoneNumber\": \"+1234567890\",\n  \"company\": \"Omena Agency\"\n}"
+            },
+            "url": {
+              "raw": "{{baseUrl}}/auth/signup",
+              "host": ["{{baseUrl}}"],
+              "path": ["auth", "signup"]
+            },
+            "description": "Create new user account. Returns custom token for client-side authentication.\n\n**Required Fields:**\n- email: Valid email address\n- password: Minimum 6 characters\n- firstName: User's first name\n- lastName: User's last name\n\n**Optional Fields:**\n- phoneNumber: Phone number with country code\n- company: Company name"
+          },
+          "response": [
+            {
+              "name": "Success Response",
+              "originalRequest": {
+                "method": "POST",
+                "header": [
+                  {
+                    "key": "Content-Type",
+                    "value": "application/json"
+                  }
+                ],
+                "body": {
+                  "mode": "raw",
+                  "raw": "{\n  \"email\": \"john.doe@omena.com\",\n  \"password\": \"SecurePassword123\",\n  \"firstName\": \"John\",\n  \"lastName\": \"Doe\",\n  \"phoneNumber\": \"+1234567890\",\n  \"company\": \"Omena Agency\"\n}"
+                },
+                "url": {
+                  "raw": "{{baseUrl}}/auth/signup",
+                  "host": ["{{baseUrl}}"],
+                  "path": ["auth", "signup"]
+                }
+              },
+              "status": "Created",
+              "code": 201,
+              "_postman_previewlanguage": "json",
+              "header": [
+                {
+                  "key": "Content-Type",
+                  "value": "application/json"
+                }
+              ],
+              "body": "{\n  \"success\": true,\n  \"message\": \"User created successfully\",\n  \"data\": {\n    \"uid\": \"xYz123AbC456DeF789\",\n    \"email\": \"john.doe@omena.com\",\n    \"customToken\": \"eyJhbGciOiJSUzI1NiIsInR5cCI6IkpXVCJ9...\",\n    \"displayName\": \"John Doe\"\n  }\n}"
+            },
+            {
+              "name": "Error - Email Already Exists",
+              "originalRequest": {
+                "method": "POST",
+                "header": [
+                  {
+                    "key": "Content-Type",
+                    "value": "application/json"
+                  }
+                ],
+                "body": {
+                  "mode": "raw",
+                  "raw": "{\n  \"email\": \"existing@omena.com\",\n  \"password\": \"SecurePassword123\",\n  \"firstName\": \"John\",\n  \"lastName\": \"Doe\"\n}"
+                },
+                "url": {
+                  "raw": "{{baseUrl}}/auth/signup",
+                  "host": ["{{baseUrl}}"],
+                  "path": ["auth", "signup"]
+                }
+              },
+              "status": "Bad Request",
+              "code": 400,
+              "_postman_previewlanguage": "json",
+              "header": [
+                {
+                  "key": "Content-Type",
+                  "value": "application/json"
+                }
+              ],
+              "body": "{\n  \"success\": false,\n  \"message\": \"Email already exists\",\n  \"errors\": []\n}"
+            },
+            {
+              "name": "Error - Validation Failed",
+              "originalRequest": {
+                "method": "POST",
+                "header": [
+                  {
+                    "key": "Content-Type",
+                    "value": "application/json"
+                  }
+                ],
+                "body": {
+                  "mode": "raw",
+                  "raw": "{\n  \"email\": \"invalid-email\",\n  \"password\": \"123\"\n}"
+                },
+                "url": {
+                  "raw": "{{baseUrl}}/auth/signup",
+                  "host": ["{{baseUrl}}"],
+                  "path": ["auth", "signup"]
+                }
+              },
+              "status": "Bad Request",
+              "code": 400,
+              "_postman_previewlanguage": "json",
+              "header": [
+                {
+                  "key": "Content-Type",
+                  "value": "application/json"
+                }
+              ],
+              "body": "{\n  \"success\": false,\n  \"message\": \"Validation failed\",\n  \"errors\": [\n    {\n      \"field\": \"email\",\n      \"message\": \"Invalid email address\"\n    },\n    {\n      \"field\": \"password\",\n      \"message\": \"Password must be at least 6 characters\"\n    },\n    {\n      \"field\": \"firstName\",\n      \"message\": \"First name is required\"\n    },\n    {\n      \"field\": \"lastName\",\n      \"message\": \"Last name is required\"\n    }\n  ]\n}"
+            }
+          ]
+        },
+        {
+          "name": "Login",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "if (pm.response.code === 200) {",
+                  "    const response = pm.response.json();",
+                  "    if (response.success && response.data) {",
+                  "        pm.collectionVariables.set('customToken', response.data.customToken);",
+                  "        pm.collectionVariables.set('userId', response.data.uid);",
+                  "        console.log('✅ Logged in successfully');",
+                  "    }",
+                  "}"
+                ],
+                "type": "text/javascript"
+              }
+            }
+          ],
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"email\": \"john.doe@omena.com\",\n  \"password\": \"SecurePassword123\"\n}"
+            },
+            "url": {
+              "raw": "{{baseUrl}}/auth/login",
+              "host": ["{{baseUrl}}"],
+              "path": ["auth", "login"]
+            },
+            "description": "Login with email and password.\n\n**Required Fields:**\n- email: User's email address\n- password: User's password"
+          },
+          "response": [
+            {
+              "name": "Success Response",
+              "originalRequest": {
+                "method": "POST",
+                "header": [
+                  {
+                    "key": "Content-Type",
+                    "value": "application/json"
+                  }
+                ],
+                "body": {
+                  "mode": "raw",
+                  "raw": "{\n  \"email\": \"john.doe@omena.com\",\n  \"password\": \"SecurePassword123\"\n}"
+                },
+                "url": {
+                  "raw": "{{baseUrl}}/auth/login",
+                  "host": ["{{baseUrl}}"],
+                  "path": ["auth", "login"]
+                }
+              },
+              "status": "OK",
+              "code": 200,
+              "_postman_previewlanguage": "json",
+              "header": [
+                {
+                  "key": "Content-Type",
+                  "value": "application/json"
+                }
+              ],
+              "body": "{\n  \"success\": true,\n  \"message\": \"Login successful\",\n  \"data\": {\n    \"uid\": \"xYz123AbC456DeF789\",\n    \"email\": \"john.doe@omena.com\",\n    \"customToken\": \"eyJhbGciOiJSUzI1NiIsInR5cCI6IkpXVCJ9...\",\n    \"displayName\": \"John Doe\"\n  }\n}"
+            },
+            {
+              "name": "Error - Invalid Token",
+              "originalRequest": {
+                "method": "POST",
+                "header": [
+                  {
+                    "key": "Content-Type",
+                    "value": "application/json"
+                  }
+                ],
+                "body": {
+                  "mode": "raw",
+                  "raw": "{\n  \"email\": \"john.doe@omena.com\",\n  \"password\": \"WrongPassword\"\n}"
+                },
+                "url": {
+                  "raw": "{{baseUrl}}/auth/login",
+                  "host": ["{{baseUrl}}"],
+                  "path": ["auth", "login"]
+                }
+              },
+              "status": "Unauthorized",
+              "code": 401,
+              "_postman_previewlanguage": "json",
+              "header": [
+                {
+                  "key": "Content-Type",
+                  "value": "application/json"
+                }
+              ],
+              "body": "{\n  \"success\": false,\n  \"message\": \"Invalid email or password\"\n}"
+            }
+          ]
+        },
+        {
+          "name": "Refresh Token",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "if (pm.response.code === 200) {",
+                  "    const response = pm.response.json();",
+                  "    if (response.success && response.data && response.data.customToken) {",
+                  "        pm.collectionVariables.set('customToken', response.data.customToken);",
+                  "        console.log('✅ Token refreshed successfully');",
+                  "    }",
+                  "}"
+                ],
+                "type": "text/javascript"
+              }
+            }
+          ],
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"idToken\": \"eyJhbGciOiJSUzI1NiIsImtpZCI6IjFkYzBmMTc...\"\n}"
+            },
+            "url": {
+              "raw": "{{baseUrl}}/auth/refresh-token",
+              "host": ["{{baseUrl}}"],
+              "path": ["auth", "refresh-token"]
+            },
+            "description": "Refresh authentication token. Send current ID token, get new custom token."
+          },
+          "response": [
+            {
+              "name": "Success Response",
+              "originalRequest": {
+                "method": "POST",
+                "header": [
+                  {
+                    "key": "Content-Type",
+                    "value": "application/json"
+                  }
+                ],
+                "body": {
+                  "mode": "raw",
+                  "raw": "{\n  \"idToken\": \"eyJhbGciOiJSUzI1NiIsImtpZCI6IjFkYzBmMTc...\"\n}"
+                },
+                "url": {
+                  "raw": "{{baseUrl}}/auth/refresh-token",
+                  "host": ["{{baseUrl}}"],
+                  "path": ["auth", "refresh-token"]
+                }
+              },
+              "status": "OK",
+              "code": 200,
+              "_postman_previewlanguage": "json",
+              "header": [
+                {
+                  "key": "Content-Type",
+                  "value": "application/json"
+                }
+              ],
+              "body": "{\n  \"success\": true,\n  \"message\": \"Token refreshed successfully\",\n  \"data\": {\n    \"customToken\": \"eyJhbGciOiJSUzI1NiIsInR5cCI6IkpXVCJ9...\",\n    \"uid\": \"xYz123AbC456DeF789\"\n  }\n}"
+            }
+          ]
+        },
+        {
+          "name": "Get Profile",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{authToken}}",
+                "description": "Firebase ID Token"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/auth/profile",
+              "host": ["{{baseUrl}}"],
+              "path": ["auth", "profile"]
+            },
+            "description": "Get current user profile from Firestore.\n\n**Authentication:** Required (Bearer token)"
+          },
+          "response": [
+            {
+              "name": "Success Response",
+              "originalRequest": {
+                "method": "GET",
+                "header": [
+                  {
+                    "key": "Authorization",
+                    "value": "Bearer {{authToken}}"
+                  }
+                ],
+                "url": {
+                  "raw": "{{baseUrl}}/auth/profile",
+                  "host": ["{{baseUrl}}"],
+                  "path": ["auth", "profile"]
+                }
+              },
+              "status": "OK",
+              "code": 200,
+              "_postman_previewlanguage": "json",
+              "header": [
+                {
+                  "key": "Content-Type",
+                  "value": "application/json"
+                }
+              ],
+              "body": "{\n  \"success\": true,\n  \"data\": {\n    \"uid\": \"xYz123AbC456DeF789\",\n    \"email\": \"john.doe@omena.com\",\n    \"firstName\": \"John\",\n    \"lastName\": \"Doe\",\n    \"displayName\": \"John Doe\",\n    \"phoneNumber\": \"+1234567890\",\n    \"company\": \"Omena Agency\",\n    \"photoURL\": null,\n    \"emailVerified\": false,\n    \"role\": \"employee\",\n    \"status\": \"active\",\n    \"createdAt\": \"2024-01-15T10:30:00.000Z\",\n    \"updatedAt\": \"2024-01-15T10:30:00.000Z\",\n    \"lastLogin\": \"2024-01-15T10:30:00.000Z\"\n  }\n}"
+            },
+            {
+              "name": "Error - Unauthorized",
+              "originalRequest": {
+                "method": "GET",
+                "header": [
+                  {
+                    "key": "Authorization",
+                    "value": "Bearer invalid-token"
+                  }
+                ],
+                "url": {
+                  "raw": "{{baseUrl}}/auth/profile",
+                  "host": ["{{baseUrl}}"],
+                  "path": ["auth", "profile"]
+                }
+              },
+              "status": "Unauthorized",
+              "code": 401,
+              "_postman_previewlanguage": "json",
+              "header": [
+                {
+                  "key": "Content-Type",
+                  "value": "application/json"
+                }
+              ],
+              "body": "{\n  \"success\": false,\n  \"message\": \"Unauthorized - Invalid or expired token\"\n}"
+            }
+          ]
+        },
+        {
+          "name": "Update Profile",
+          "request": {
+            "method": "PUT",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{authToken}}"
+              },
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"firstName\": \"John\",\n  \"lastName\": \"Doe Updated\",\n  \"phoneNumber\": \"+1987654321\",\n  \"company\": \"Omena Digital Agency\",\n  \"photoURL\": \"https://storage.googleapis.com/omena-crm.appspot.com/avatars/user123.jpg\"\n}"
+            },
+            "url": {
+              "raw": "{{baseUrl}}/auth/profile",
+              "host": ["{{baseUrl}}"],
+              "path": ["auth", "profile"]
+            },
+            "description": "Update user profile information.\n\n**Authentication:** Required\n\n**Updatable Fields:**\n- firstName\n- lastName\n- phoneNumber\n- company\n- photoURL"
+          },
+          "response": [
+            {
+              "name": "Success Response",
+              "originalRequest": {
+                "method": "PUT",
+                "header": [
+                  {
+                    "key": "Authorization",
+                    "value": "Bearer {{authToken}}"
+                  },
+                  {
+                    "key": "Content-Type",
+                    "value": "application/json"
+                  }
+                ],
+                "body": {
+                  "mode": "raw",
+                  "raw": "{\n  \"firstName\": \"John\",\n  \"lastName\": \"Doe Updated\",\n  \"phoneNumber\": \"+1987654321\",\n  \"company\": \"Omena Digital Agency\"\n}"
+                },
+                "url": {
+                  "raw": "{{baseUrl}}/auth/profile",
+                  "host": ["{{baseUrl}}"],
+                  "path": ["auth", "profile"]
+                }
+              },
+              "status": "OK",
+              "code": 200,
+              "_postman_previewlanguage": "json",
+              "header": [
+                {
+                  "key": "Content-Type",
+                  "value": "application/json"
+                }
+              ],
+              "body": "{\n  \"success\": true,\n  \"message\": \"Profile updated successfully\",\n  \"data\": {\n    \"uid\": \"xYz123AbC456DeF789\",\n    \"email\": \"john.doe@omena.com\",\n    \"firstName\": \"John\",\n    \"lastName\": \"Doe Updated\",\n    \"displayName\": \"John Doe Updated\",\n    \"phoneNumber\": \"+1987654321\",\n    \"company\": \"Omena Digital Agency\",\n    \"updatedAt\": \"2024-01-15T11:30:00.000Z\"\n  }\n}"
+            }
+          ]
+        },
+        {
+          "name": "Reset Password",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"email\": \"john.doe@omena.com\"\n}"
+            },
+            "url": {
+              "raw": "{{baseUrl}}/auth/reset-password",
+              "host": ["{{baseUrl}}"],
+              "path": ["auth", "reset-password"]
+            },
+            "description": "Generate and send password reset link to user's email."
+          },
+          "response": [
+            {
+              "name": "Success Response",
+              "originalRequest": {
+                "method": "POST",
+                "header": [
+                  {
+                    "key": "Content-Type",
+                    "value": "application/json"
+                  }
+                ],
+                "body": {
+                  "mode": "raw",
+                  "raw": "{\n  \"email\": \"john.doe@omena.com\"\n}"
+                },
+                "url": {
+                  "raw": "{{baseUrl}}/auth/reset-password",
+                  "host": ["{{baseUrl}}"],
+                  "path": ["auth", "reset-password"]
+                }
+              },
+              "status": "OK",
+              "code": 200,
+              "_postman_previewlanguage": "json",
+              "header": [
+                {
+                  "key": "Content-Type",
+                  "value": "application/json"
+                }
+              ],
+              "body": "{\n  \"success\": true,\n  \"message\": \"Password reset email sent successfully\",\n  \"data\": {\n    \"email\": \"john.doe@omena.com\"\n  }\n}"
+            }
+          ]
+        },
+        {
+          "name": "Verify Email",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{authToken}}"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/auth/verify-email",
+              "host": ["{{baseUrl}}"],
+              "path": ["auth", "verify-email"]
+            },
+            "description": "Generate and send email verification link.\n\n**Authentication:** Required"
+          },
+          "response": [
+            {
+              "name": "Success Response",
+              "originalRequest": {
+                "method": "POST",
+                "header": [
+                  {
+                    "key": "Authorization",
+                    "value": "Bearer {{authToken}}"
+                  }
+                ],
+                "url": {
+                  "raw": "{{baseUrl}}/auth/verify-email",
+                  "host": ["{{baseUrl}}"],
+                  "path": ["auth", "verify-email"]
+                }
+              },
+              "status": "OK",
+              "code": 200,
+              "_postman_previewlanguage": "json",
+              "header": [
+                {
+                  "key": "Content-Type",
+                  "value": "application/json"
+                }
+              ],
+              "body": "{\n  \"success\": true,\n  \"message\": \"Verification email sent successfully\"\n}"
+            }
+          ]
+        },
+        {
+          "name": "Logout",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{authToken}}"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/auth/logout",
+              "host": ["{{baseUrl}}"],
+              "path": ["auth", "logout"]
+            },
+            "description": "Revoke all refresh tokens for user.\n\n**Authentication:** Required"
+          },
+          "response": [
+            {
+              "name": "Success Response",
+              "originalRequest": {
+                "method": "POST",
+                "header": [
+                  {
+                    "key": "Authorization",
+                    "value": "Bearer {{authToken}}"
+                  }
+                ],
+                "url": {
+                  "raw": "{{baseUrl}}/auth/logout",
+                  "host": ["{{baseUrl}}"],
+                  "path": ["auth", "logout"]
+                }
+              },
+              "status": "OK",
+              "code": 200,
+              "_postman_previewlanguage": "json",
+              "header": [
+                {
+                  "key": "Content-Type",
+                  "value": "application/json"
+                }
+              ],
+              "body": "{\n  \"success\": true,\n  \"message\": \"Logged out successfully\"\n}"
+            }
+          ]
+        },
+        {
+          "name": "Delete Account",
+          "request": {
+            "method": "DELETE",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{authToken}}"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/auth/account",
+              "host": ["{{baseUrl}}"],
+              "path": ["auth", "account"]
+            },
+            "description": "Permanently delete user account.\n\n**Authentication:** Required\n**Warning:** This action cannot be undone!"
+          },
+          "response": [
+            {
+              "name": "Success Response",
+              "originalRequest": {
+                "method": "DELETE",
+                "header": [
+                  {
+                    "key": "Authorization",
+                    "value": "Bearer {{authToken}}"
+                  }
+                ],
+                "url": {
+                  "raw": "{{baseUrl}}/auth/account",
+                  "host": ["{{baseUrl}}"],
+                  "path": ["auth", "account"]
+                }
+              },
+              "status": "OK",
+              "code": 200,
+              "_postman_previewlanguage": "json",
+              "header": [
+                {
+                  "key": "Content-Type",
+                  "value": "application/json"
+                }
+              ],
+              "body": "{\n  \"success\": true,\n  \"message\": \"Account deleted successfully\"\n}"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "name": "Customers",
+      "description": "Customer management endpoints - CRUD operations for customers",
+      "item": [
+        {
+          "name": "Get All Customers",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{authToken}}"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/customers",
+              "host": ["{{baseUrl}}"],
+              "path": ["customers"]
+            },
+            "description": "Retrieve all customers.\n\n**Authentication:** Required"
+          },
+          "response": [
+            {
+              "name": "Success Response",
+              "originalRequest": {
+                "method": "GET",
+                "header": [
+                  {
+                    "key": "Authorization",
+                    "value": "Bearer {{authToken}}"
+                  }
+                ],
+                "url": {
+                  "raw": "{{baseUrl}}/customers",
+                  "host": ["{{baseUrl}}"],
+                  "path": ["customers"]
+                }
+              },
+              "status": "OK",
+              "code": 200,
+              "_postman_previewlanguage": "json",
+              "header": [
+                {
+                  "key": "Content-Type",
+                  "value": "application/json"
+                }
+              ],
+              "body": "{\n  \"success\": true,\n  \"data\": [\n    {\n      \"id\": \"cust_001\",\n      \"firstName\": \"Alice\",\n      \"lastName\": \"Johnson\",\n      \"email\": \"alice.johnson@example.com\",\n      \"phoneNumber\": \"+1234567890\",\n      \"company\": \"Tech Solutions Inc\",\n      \"address\": \"123 Main St, New York, NY 10001\",\n      \"status\": \"active\",\n      \"totalSpent\": 15000,\n      \"projectsCompleted\": 3,\n      \"notes\": \"VIP Client - High priority\",\n      \"createdAt\": \"2024-01-10T08:00:00.000Z\",\n      \"updatedAt\": \"2024-01-15T10:30:00.000Z\"\n    },\n    {\n      \"id\": \"cust_002\",\n      \"firstName\": \"Bob\",\n      \"lastName\": \"Smith\",\n      \"email\": \"bob.smith@example.com\",\n      \"phoneNumber\": \"+1987654321\",\n      \"company\": \"Digital Marketing Pro\",\n      \"address\": \"456 Oak Ave, Los Angeles, CA 90001\",\n      \"status\": \"active\",\n      \"totalSpent\": 8500,\n      \"projectsCompleted\": 2,\n      \"notes\": \"Prefers email communication\",\n      \"createdAt\": \"2024-01-12T09:15:00.000Z\",\n      \"updatedAt\": \"2024-01-14T14:20:00.000Z\"\n    }\n  ],\n  \"count\": 2\n}"
+            }
+          ]
+        },
+        {
+          "name": "Get Customer by ID",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{authToken}}"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/customers/{{customerId}}",
+              "host": ["{{baseUrl}}"],
+              "path": ["customers", "{{customerId}}"]
+            },
+            "description": "Retrieve a specific customer by ID.\n\n**Authentication:** Required"
+          },
+          "response": [
+            {
+              "name": "Success Response",
+              "originalRequest": {
+                "method": "GET",
+                "header": [
+                  {
+                    "key": "Authorization",
+                    "value": "Bearer {{authToken}}"
+                  }
+                ],
+                "url": {
+                  "raw": "{{baseUrl}}/customers/cust_001",
+                  "host": ["{{baseUrl}}"],
+                  "path": ["customers", "cust_001"]
+                }
+              },
+              "status": "OK",
+              "code": 200,
+              "_postman_previewlanguage": "json",
+              "header": [
+                {
+                  "key": "Content-Type",
+                  "value": "application/json"
+                }
+              ],
+              "body": "{\n  \"success\": true,\n  \"data\": {\n    \"id\": \"cust_001\",\n    \"firstName\": \"Alice\",\n    \"lastName\": \"Johnson\",\n    \"email\": \"alice.johnson@example.com\",\n    \"phoneNumber\": \"+1234567890\",\n    \"company\": \"Tech Solutions Inc\",\n    \"address\": \"123 Main St, New York, NY 10001\",\n    \"status\": \"active\",\n    \"totalSpent\": 15000,\n    \"projectsCompleted\": 3,\n    \"notes\": \"VIP Client - High priority\",\n    \"createdAt\": \"2024-01-10T08:00:00.000Z\",\n    \"updatedAt\": \"2024-01-15T10:30:00.000Z\"\n  }\n}"
+            }
+          ]
+        },
+        {
+          "name": "Create Customer",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "if (pm.response.code === 201) {",
+                  "    const response = pm.response.json();",
+                  "    if (response.success && response.data && response.data.id) {",
+                  "        pm.collectionVariables.set('customerId', response.data.id);",
+                  "        console.log('✅ Customer created with ID:', response.data.id);",
+                  "    }",
+                  "}"
+                ],
+                "type": "text/javascript"
+              }
+            }
+          ],
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{authToken}}"
+              },
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"firstName\": \"Sarah\",\n  \"lastName\": \"Williams\",\n  \"email\": \"sarah.williams@example.com\",\n  \"phoneNumber\": \"+1555123456\",\n  \"company\": \"Creative Design Studio\",\n  \"address\": \"789 Pine Rd, Chicago, IL 60601\",\n  \"status\": \"active\",\n  \"notes\": \"Interested in web development services\"\n}"
+            },
+            "url": {
+              "raw": "{{baseUrl}}/customers",
+              "host": ["{{baseUrl}}"],
+              "path": ["customers"]
+            },
+            "description": "Create a new customer.\n\n**Authentication:** Required\n\n**Required Fields:**\n- firstName\n- lastName\n- email\n\n**Optional Fields:**\n- phoneNumber\n- company\n- address\n- status (default: 'active')\n- notes"
+          },
+          "response": [
+            {
+              "name": "Success Response",
+              "originalRequest": {
+                "method": "POST",
+                "header": [
+                  {
+                    "key": "Authorization",
+                    "value": "Bearer {{authToken}}"
+                  },
+                  {
+                    "key": "Content-Type",
+                    "value": "application/json"
+                  }
+                ],
+                "body": {
+                  "mode": "raw",
+                  "raw": "{\n  \"firstName\": \"Sarah\",\n  \"lastName\": \"Williams\",\n  \"email\": \"sarah.williams@example.com\",\n  \"phoneNumber\": \"+1555123456\",\n  \"company\": \"Creative Design Studio\",\n  \"address\": \"789 Pine Rd, Chicago, IL 60601\",\n  \"status\": \"active\",\n  \"notes\": \"Interested in web development services\"\n}"
+                },
+                "url": {
+                  "raw": "{{baseUrl}}/customers",
+                  "host": ["{{baseUrl}}"],
+                  "path": ["customers"]
+                }
+              },
+              "status": "Created",
+              "code": 201,
+              "_postman_previewlanguage": "json",
+              "header": [
+                {
+                  "key": "Content-Type",
+                  "value": "application/json"
+                }
+              ],
+              "body": "{\n  \"success\": true,\n  \"message\": \"Customer created successfully\",\n  \"data\": {\n    \"id\": \"cust_003\",\n    \"firstName\": \"Sarah\",\n    \"lastName\": \"Williams\",\n    \"email\": \"sarah.williams@example.com\",\n    \"phoneNumber\": \"+1555123456\",\n    \"company\": \"Creative Design Studio\",\n    \"address\": \"789 Pine Rd, Chicago, IL 60601\",\n    \"status\": \"active\",\n    \"totalSpent\": 0,\n    \"projectsCompleted\": 0,\n    \"notes\": \"Interested in web development services\",\n    \"createdAt\": \"2024-01-15T12:00:00.000Z\",\n    \"updatedAt\": \"2024-01-15T12:00:00.000Z\"\n  }\n}"
+            }
+          ]
+        },
+        {
+          "name": "Update Customer",
+          "request": {
+            "method": "PUT",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{authToken}}"
+              },
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"phoneNumber\": \"+1555999888\",\n  \"status\": \"active\",\n  \"notes\": \"Started web development project - Phase 1\",\n  \"totalSpent\": 5000\n}"
+            },
+            "url": {
+              "raw": "{{baseUrl}}/customers/{{customerId}}",
+              "host": ["{{baseUrl}}"],
+              "path": ["customers", "{{customerId}}"]
+            },
+            "description": "Update customer information.\n\n**Authentication:** Required"
+          },
+          "response": [
+            {
+              "name": "Success Response",
+              "originalRequest": {
+                "method": "PUT",
+                "header": [
+                  {
+                    "key": "Authorization",
+                    "value": "Bearer {{authToken}}"
+                  },
+                  {
+                    "key": "Content-Type",
+                    "value": "application/json"
+                  }
+                ],
+                "body": {
+                  "mode": "raw",
+                  "raw": "{\n  \"phoneNumber\": \"+1555999888\",\n  \"status\": \"active\",\n  \"notes\": \"Started web development project - Phase 1\",\n  \"totalSpent\": 5000\n}"
+                },
+                "url": {
+                  "raw": "{{baseUrl}}/customers/cust_003",
+                  "host": ["{{baseUrl}}"],
+                  "path": ["customers", "cust_003"]
+                }
+              },
+              "status": "OK",
+              "code": 200,
+              "_postman_previewlanguage": "json",
+              "header": [
+                {
+                  "key": "Content-Type",
+                  "value": "application/json"
+                }
+              ],
+              "body": "{\n  \"success\": true,\n  \"message\": \"Customer updated successfully\",\n  \"data\": {\n    \"id\": \"cust_003\",\n    \"firstName\": \"Sarah\",\n    \"lastName\": \"Williams\",\n    \"email\": \"sarah.williams@example.com\",\n    \"phoneNumber\": \"+1555999888\",\n    \"company\": \"Creative Design Studio\",\n    \"address\": \"789 Pine Rd, Chicago, IL 60601\",\n    \"status\": \"active\",\n    \"totalSpent\": 5000,\n    \"projectsCompleted\": 0,\n    \"notes\": \"Started web development project - Phase 1\",\n    \"updatedAt\": \"2024-01-15T14:00:00.000Z\"\n  }\n}"
+            }
+          ]
+        },
+        {
+          "name": "Delete Customer",
+          "request": {
+            "method": "DELETE",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{authToken}}"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/customers/{{customerId}}",
+              "host": ["{{baseUrl}}"],
+              "path": ["customers", "{{customerId}}"]
+            },
+            "description": "Delete a customer.\n\n**Authentication:** Required\n**Note:** This is a soft delete - customer status is set to 'deleted'"
+          },
+          "response": [
+            {
+              "name": "Success Response",
+              "originalRequest": {
+                "method": "DELETE",
+                "header": [
+                  {
+                    "key": "Authorization",
+                    "value": "Bearer {{authToken}}"
+                  }
+                ],
+                "url": {
+                  "raw": "{{baseUrl}}/customers/cust_003",
+                  "host": ["{{baseUrl}}"],
+                  "path": ["customers", "cust_003"]
+                }
+              },
+              "status": "OK",
+              "code": 200,
+              "_postman_previewlanguage": "json",
+              "header": [
+                {
+                  "key": "Content-Type",
+                  "value": "application/json"
+                }
+              ],
+              "body": "{\n  \"success\": true,\n  \"message\": \"Customer deleted successfully\"\n}"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "name": "Services",
+      "description": "Service catalog management - CRUD operations for agency services",
+      "item": [
+        {
+          "name": "Get All Services",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{authToken}}"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/services",
+              "host": ["{{baseUrl}}"],
+              "path": ["services"]
+            },
+            "description": "Retrieve all services.\n\n**Authentication:** Required"
+          },
+          "response": [
+            {
+              "name": "Success Response",
+              "originalRequest": {
+                "method": "GET",
+                "header": [
+                  {
+                    "key": "Authorization",
+                    "value": "Bearer {{authToken}}"
+                  }
+                ],
+                "url": {
+                  "raw": "{{baseUrl}}/services",
+                  "host": ["{{baseUrl}}"],
+                  "path": ["services"]
+                }
+              },
+              "status": "OK",
+              "code": 200,
+              "_postman_previewlanguage": "json",
+              "header": [
+                {
+                  "key": "Content-Type",
+                  "value": "application/json"
+                }
+              ],
+              "body": "{\n  \"success\": true,\n  \"data\": [\n    {\n      \"id\": \"serv_001\",\n      \"name\": \"Website Development\",\n      \"description\": \"Custom website design and development with modern technologies\",\n      \"category\": \"Web Development\",\n      \"price\": 5000,\n      \"duration\": \"4-6 weeks\",\n      \"status\": \"active\",\n      \"features\": [\n        \"Responsive design\",\n        \"SEO optimized\",\n        \"Mobile-friendly\",\n        \"Admin panel\"\n      ],\n      \"createdAt\": \"2024-01-01T00:00:00.000Z\",\n      \"updatedAt\": \"2024-01-10T10:00:00.000Z\"\n    },\n    {\n      \"id\": \"serv_002\",\n      \"name\": \"Digital Marketing\",\n      \"description\": \"Complete digital marketing package including SEO, SEM, and social media\",\n      \"category\": \"Marketing\",\n      \"price\": 3000,\n      \"duration\": \"Monthly\",\n      \"status\": \"active\",\n      \"features\": [\n        \"SEO optimization\",\n        \"Google Ads management\",\n        \"Social media marketing\",\n        \"Monthly reports\"\n      ],\n      \"createdAt\": \"2024-01-01T00:00:00.000Z\",\n      \"updatedAt\": \"2024-01-05T15:30:00.000Z\"\n    },\n    {\n      \"id\": \"serv_003\",\n      \"name\": \"Brand Identity Design\",\n      \"description\": \"Complete brand identity package including logo, colors, and guidelines\",\n      \"category\": \"Design\",\n      \"price\": 2500,\n      \"duration\": \"2-3 weeks\",\n      \"status\": \"active\",\n      \"features\": [\n        \"Logo design\",\n        \"Color palette\",\n        \"Typography\",\n        \"Brand guidelines\",\n        \"Business cards\"\n      ],\n      \"createdAt\": \"2024-01-01T00:00:00.000Z\",\n      \"updatedAt\": \"2024-01-08T09:15:00.000Z\"\n    }\n  ],\n  \"count\": 3\n}"
+            }
+          ]
+        },
+        {
+          "name": "Get Service by ID",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{authToken}}"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/services/{{serviceId}}",
+              "host": ["{{baseUrl}}"],
+              "path": ["services", "{{serviceId}}"]
+            },
+            "description": "Retrieve a specific service by ID.\n\n**Authentication:** Required"
+          },
+          "response": [
+            {
+              "name": "Success Response",
+              "originalRequest": {
+                "method": "GET",
+                "header": [
+                  {
+                    "key": "Authorization",
+                    "value": "Bearer {{authToken}}"
+                  }
+                ],
+                "url": {
+                  "raw": "{{baseUrl}}/services/serv_001",
+                  "host": ["{{baseUrl}}"],
+                  "path": ["services", "serv_001"]
+                }
+              },
+              "status": "OK",
+              "code": 200,
+              "_postman_previewlanguage": "json",
+              "header": [
+                {
+                  "key": "Content-Type",
+                  "value": "application/json"
+                }
+              ],
+              "body": "{\n  \"success\": true,\n  \"data\": {\n    \"id\": \"serv_001\",\n    \"name\": \"Website Development\",\n    \"description\": \"Custom website design and development with modern technologies\",\n    \"category\": \"Web Development\",\n    \"price\": 5000,\n    \"duration\": \"4-6 weeks\",\n    \"status\": \"active\",\n    \"features\": [\n      \"Responsive design\",\n      \"SEO optimized\",\n      \"Mobile-friendly\",\n      \"Admin panel\"\n    ],\n    \"createdAt\": \"2024-01-01T00:00:00.000Z\",\n    \"updatedAt\": \"2024-01-10T10:00:00.000Z\"\n  }\n}"
+            }
+          ]
+        },
+        {
+          "name": "Create Service",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "if (pm.response.code === 201) {",
+                  "    const response = pm.response.json();",
+                  "    if (response.success && response.data && response.data.id) {",
+                  "        pm.collectionVariables.set('serviceId', response.data.id);",
+                  "        console.log('✅ Service created with ID:', response.data.id);",
+                  "    }",
+                  "}"
+                ],
+                "type": "text/javascript"
+              }
+            }
+          ],
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{authToken}}"
+              },
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"name\": \"Mobile App Development\",\n  \"description\": \"Native iOS and Android app development with cross-platform compatibility\",\n  \"category\": \"Mobile Development\",\n  \"price\": 15000,\n  \"duration\": \"8-12 weeks\",\n  \"status\": \"active\",\n  \"features\": [\n    \"iOS development\",\n    \"Android development\",\n    \"Backend integration\",\n    \"Push notifications\",\n    \"App store submission\"\n  ]\n}"
+            },
+            "url": {
+              "raw": "{{baseUrl}}/services",
+              "host": ["{{baseUrl}}"],
+              "path": ["services"]
+            },
+            "description": "Create a new service.\n\n**Authentication:** Required\n\n**Required Fields:**\n- name\n- description\n- category\n- price\n\n**Optional Fields:**\n- duration\n- status (default: 'active')\n- features (array)"
+          },
+          "response": [
+            {
+              "name": "Success Response",
+              "originalRequest": {
+                "method": "POST",
+                "header": [
+                  {
+                    "key": "Authorization",
+                    "value": "Bearer {{authToken}}"
+                  },
+                  {
+                    "key": "Content-Type",
+                    "value": "application/json"
+                  }
+                ],
+                "body": {
+                  "mode": "raw",
+                  "raw": "{\n  \"name\": \"Mobile App Development\",\n  \"description\": \"Native iOS and Android app development with cross-platform compatibility\",\n  \"category\": \"Mobile Development\",\n  \"price\": 15000,\n  \"duration\": \"8-12 weeks\",\n  \"status\": \"active\",\n  \"features\": [\n    \"iOS development\",\n    \"Android development\",\n    \"Backend integration\",\n    \"Push notifications\",\n    \"App store submission\"\n  ]\n}"
+                },
+                "url": {
+                  "raw": "{{baseUrl}}/services",
+                  "host": ["{{baseUrl}}"],
+                  "path": ["services"]
+                }
+              },
+              "status": "Created",
+              "code": 201,
+              "_postman_previewlanguage": "json",
+              "header": [
+                {
+                  "key": "Content-Type",
+                  "value": "application/json"
+                }
+              ],
+              "body": "{\n  \"success\": true,\n  \"message\": \"Service created successfully\",\n  \"data\": {\n    \"id\": \"serv_004\",\n    \"name\": \"Mobile App Development\",\n    \"description\": \"Native iOS and Android app development with cross-platform compatibility\",\n    \"category\": \"Mobile Development\",\n    \"price\": 15000,\n    \"duration\": \"8-12 weeks\",\n    \"status\": \"active\",\n    \"features\": [\n      \"iOS development\",\n      \"Android development\",\n      \"Backend integration\",\n      \"Push notifications\",\n      \"App store submission\"\n    ],\n    \"createdAt\": \"2024-01-15T12:00:00.000Z\",\n    \"updatedAt\": \"2024-01-15T12:00:00.000Z\"\n  }\n}"
+            }
+          ]
+        },
+        {
+          "name": "Update Service",
+          "request": {
+            "method": "PUT",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{authToken}}"
+              },
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"price\": 18000,\n  \"duration\": \"10-14 weeks\",\n  \"features\": [\n    \"iOS development\",\n    \"Android development\",\n    \"Backend integration\",\n    \"Push notifications\",\n    \"App store submission\",\n    \"6 months support\"\n  ]\n}"
+            },
+            "url": {
+              "raw": "{{baseUrl}}/services/{{serviceId}}",
+              "host": ["{{baseUrl}}"],
+              "path": ["services", "{{serviceId}}"]
+            },
+            "description": "Update service information.\n\n**Authentication:** Required"
+          },
+          "response": [
+            {
+              "name": "Success Response",
+              "originalRequest": {
+                "method": "PUT",
+                "header": [
+                  {
+                    "key": "Authorization",
+                    "value": "Bearer {{authToken}}"
+                  },
+                  {
+                    "key": "Content-Type",
+                    "value": "application/json"
+                  }
+                ],
+                "body": {
+                  "mode": "raw",
+                  "raw": "{\n  \"price\": 18000,\n  \"duration\": \"10-14 weeks\"\n}"
+                },
+                "url": {
+                  "raw": "{{baseUrl}}/services/serv_004",
+                  "host": ["{{baseUrl}}"],
+                  "path": ["services", "serv_004"]
+                }
+              },
+              "status": "OK",
+              "code": 200,
+              "_postman_previewlanguage": "json",
+              "header": [
+                {
+                  "key": "Content-Type",
+                  "value": "application/json"
+                }
+              ],
+              "body": "{\n  \"success\": true,\n  \"message\": \"Service updated successfully\",\n  \"data\": {\n    \"id\": \"serv_004\",\n    \"name\": \"Mobile App Development\",\n    \"description\": \"Native iOS and Android app development with cross-platform compatibility\",\n    \"category\": \"Mobile Development\",\n    \"price\": 18000,\n    \"duration\": \"10-14 weeks\",\n    \"status\": \"active\",\n    \"updatedAt\": \"2024-01-15T14:00:00.000Z\"\n  }\n}"
+            }
+          ]
+        },
+        {
+          "name": "Delete Service",
+          "request": {
+            "method": "DELETE",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{authToken}}"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/services/{{serviceId}}",
+              "host": ["{{baseUrl}}"],
+              "path": ["services", "{{serviceId}}"]
+            },
+            "description": "Delete a service.\n\n**Authentication:** Required"
+          },
+          "response": [
+            {
+              "name": "Success Response",
+              "originalRequest": {
+                "method": "DELETE",
+                "header": [
+                  {
+                    "key": "Authorization",
+                    "value": "Bearer {{authToken}}"
+                  }
+                ],
+                "url": {
+                  "raw": "{{baseUrl}}/services/serv_004",
+                  "host": ["{{baseUrl}}"],
+                  "path": ["services", "serv_004"]
+                }
+              },
+              "status": "OK",
+              "code": 200,
+              "_postman_previewlanguage": "json",
+              "header": [
+                {
+                  "key": "Content-Type",
+                  "value": "application/json"
+                }
+              ],
+              "body": "{\n  \"success\": true,\n  \"message\": \"Service deleted successfully\"\n}"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "name": "Transactions",
+      "description": "Transaction management - CRUD operations for financial transactions",
+      "item": [
+        {
+          "name": "Get All Transactions",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{authToken}}"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/transactions",
+              "host": ["{{baseUrl}}"],
+              "path": ["transactions"]
+            },
+            "description": "Retrieve all transactions.\n\n**Authentication:** Required"
+          },
+          "response": [
+            {
+              "name": "Success Response",
+              "originalRequest": {
+                "method": "GET",
+                "header": [
+                  {
+                    "key": "Authorization",
+                    "value": "Bearer {{authToken}}"
+                  }
+                ],
+                "url": {
+                  "raw": "{{baseUrl}}/transactions",
+                  "host": ["{{baseUrl}}"],
+                  "path": ["transactions"]
+                }
+              },
+              "status": "OK",
+              "code": 200,
+              "_postman_previewlanguage": "json",
+              "header": [
+                {
+                  "key": "Content-Type",
+                  "value": "application/json"
+                }
+              ],
+              "body": "{\n  \"success\": true,\n  \"data\": [\n    {\n      \"id\": \"txn_001\",\n      \"customerId\": \"cust_001\",\n      \"amount\": 5000,\n      \"type\": \"income\",\n      \"status\": \"completed\",\n      \"date\": \"2024-01-15T10:00:00.000Z\",\n      \"description\": \"Website development project payment\",\n      \"paymentMethod\": \"bank_transfer\",\n      \"createdAt\": \"2024-01-15T10:00:00.000Z\",\n      \"updatedAt\": \"2024-01-15T10:00:00.000Z\"\n    },\n    {\n      \"id\": \"txn_002\",\n      \"customerId\": \"cust_002\",\n      \"amount\": 3000,\n      \"type\": \"income\",\n      \"status\": \"pending\",\n      \"date\": \"2024-01-16T14:30:00.000Z\",\n      \"description\": \"Monthly marketing retainer\",\n      \"paymentMethod\": \"credit_card\",\n      \"createdAt\": \"2024-01-16T14:30:00.000Z\",\n      \"updatedAt\": \"2024-01-16T14:30:00.000Z\"\n    }\n  ],\n  \"count\": 2\n}"
+            }
+          ]
+        },
+        {
+          "name": "Get Transaction by ID",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{authToken}}"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/transactions/{{transactionId}}",
+              "host": ["{{baseUrl}}"],
+              "path": ["transactions", "{{transactionId}}"]
+            },
+            "description": "Retrieve a specific transaction by ID.\n\n**Authentication:** Required"
+          },
+          "response": [
+            {
+              "name": "Success Response",
+              "originalRequest": {
+                "method": "GET",
+                "header": [
+                  {
+                    "key": "Authorization",
+                    "value": "Bearer {{authToken}}"
+                  }
+                ],
+                "url": {
+                  "raw": "{{baseUrl}}/transactions/txn_001",
+                  "host": ["{{baseUrl}}"],
+                  "path": ["transactions", "txn_001"]
+                }
+              },
+              "status": "OK",
+              "code": 200,
+              "_postman_previewlanguage": "json",
+              "header": [
+                {
+                  "key": "Content-Type",
+                  "value": "application/json"
+                }
+              ],
+              "body": "{\n  \"success\": true,\n  \"data\": {\n    \"id\": \"txn_001\",\n    \"customerId\": \"cust_001\",\n    \"amount\": 5000,\n    \"type\": \"income\",\n    \"status\": \"completed\",\n    \"date\": \"2024-01-15T10:00:00.000Z\",\n    \"description\": \"Website development project payment\",\n    \"paymentMethod\": \"bank_transfer\",\n    \"createdAt\": \"2024-01-15T10:00:00.000Z\",\n    \"updatedAt\": \"2024-01-15T10:00:00.000Z\"\n  }\n}"
+            }
+          ]
+        },
+        {
+          "name": "Create Transaction",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "if (pm.response.code === 201) {",
+                  "    const response = pm.response.json();",
+                  "    if (response.success && response.data && response.data.id) {",
+                  "        pm.collectionVariables.set('transactionId', response.data.id);",
+                  "        console.log('✅ Transaction created with ID:', response.data.id);",
+                  "    }",
+                  "}"
+                ],
+                "type": "text/javascript"
+              }
+            }
+          ],
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{authToken}}"
+              },
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"customerId\": \"cust_003\",\n  \"amount\": 2500,\n  \"type\": \"income\",\n  \"status\": \"pending\",\n  \"date\": \"2024-01-17T09:00:00.000Z\",\n  \"description\": \"Brand identity design project - 50% deposit\",\n  \"paymentMethod\": \"credit_card\"\n}"
+            },
+            "url": {
+              "raw": "{{baseUrl}}/transactions",
+              "host": ["{{baseUrl}}"],
+              "path": ["transactions"]
+            },
+            "description": "Create a new transaction.\n\n**Authentication:** Required\n\n**Required Fields:**\n- customerId: ID of the customer\n- amount: Transaction amount\n- type: 'income' or 'expense'\n- date: Transaction date\n\n**Optional Fields:**\n- status (default: 'pending')\n- description\n- paymentMethod"
+          },
+          "response": [
+            {
+              "name": "Success Response",
+              "originalRequest": {
+                "method": "POST",
+                "header": [
+                  {
+                    "key": "Authorization",
+                    "value": "Bearer {{authToken}}"
+                  },
+                  {
+                    "key": "Content-Type",
+                    "value": "application/json"
+                  }
+                ],
+                "body": {
+                  "mode": "raw",
+                  "raw": "{\n  \"customerId\": \"cust_003\",\n  \"amount\": 2500,\n  \"type\": \"income\",\n  \"status\": \"pending\",\n  \"date\": \"2024-01-17T09:00:00.000Z\",\n  \"description\": \"Brand identity design project - 50% deposit\",\n  \"paymentMethod\": \"credit_card\"\n}"
+                },
+                "url": {
+                  "raw": "{{baseUrl}}/transactions",
+                  "host": ["{{baseUrl}}"],
+                  "path": ["transactions"]
+                }
+              },
+              "status": "Created",
+              "code": 201,
+              "_postman_previewlanguage": "json",
+              "header": [
+                {
+                  "key": "Content-Type",
+                  "value": "application/json"
+                }
+              ],
+              "body": "{\n  \"success\": true,\n  \"message\": \"Transaction created successfully\",\n  \"data\": {\n    \"id\": \"txn_003\",\n    \"customerId\": \"cust_003\",\n    \"amount\": 2500,\n    \"type\": \"income\",\n    \"status\": \"pending\",\n    \"date\": \"2024-01-17T09:00:00.000Z\",\n    \"description\": \"Brand identity design project - 50% deposit\",\n    \"paymentMethod\": \"credit_card\",\n    \"createdAt\": \"2024-01-17T09:00:00.000Z\",\n    \"updatedAt\": \"2024-01-17T09:00:00.000Z\"\n  }\n}"
+            }
+          ]
+        },
+        {
+          "name": "Update Transaction",
+          "request": {
+            "method": "PUT",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{authToken}}"
+              },
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"status\": \"completed\",\n  \"description\": \"Brand identity design project - 50% deposit - PAID\"\n}"
+            },
+            "url": {
+              "raw": "{{baseUrl}}/transactions/{{transactionId}}",
+              "host": ["{{baseUrl}}"],
+              "path": ["transactions", "{{transactionId}}"]
+            },
+            "description": "Update transaction information.\n\n**Authentication:** Required"
+          },
+          "response": [
+            {
+              "name": "Success Response",
+              "originalRequest": {
+                "method": "PUT",
+                "header": [
+                  {
+                    "key": "Authorization",
+                    "value": "Bearer {{authToken}}"
+                  },
+                  {
+                    "key": "Content-Type",
+                    "value": "application/json"
+                  }
+                ],
+                "body": {
+                  "mode": "raw",
+                  "raw": "{\n  \"status\": \"completed\",\n  \"description\": \"Brand identity design project - 50% deposit - PAID\"\n}"
+                },
+                "url": {
+                  "raw": "{{baseUrl}}/transactions/txn_003",
+                  "host": ["{{baseUrl}}"],
+                  "path": ["transactions", "txn_003"]
+                }
+              },
+              "status": "OK",
+              "code": 200,
+              "_postman_previewlanguage": "json",
+              "header": [
+                {
+                  "key": "Content-Type",
+                  "value": "application/json"
+                }
+              ],
+              "body": "{\n  \"success\": true,\n  \"message\": \"Transaction updated successfully\",\n  \"data\": {\n    \"id\": \"txn_003\",\n    \"customerId\": \"cust_003\",\n    \"amount\": 2500,\n    \"type\": \"income\",\n    \"status\": \"completed\",\n    \"date\": \"2024-01-17T09:00:00.000Z\",\n    \"description\": \"Brand identity design project - 50% deposit - PAID\",\n    \"paymentMethod\": \"credit_card\",\n    \"updatedAt\": \"2024-01-17T11:00:00.000Z\"\n  }\n}"
+            }
+          ]
+        },
+        {
+          "name": "Delete Transaction",
+          "request": {
+            "method": "DELETE",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{authToken}}"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/transactions/{{transactionId}}",
+              "host": ["{{baseUrl}}"],
+              "path": ["transactions", "{{transactionId}}"]
+            },
+            "description": "Delete a transaction.\n\n**Authentication:** Required\n**Note:** This is a soft delete - transaction status is set to 'deleted'"
+          },
+          "response": [
+            {
+              "name": "Success Response",
+              "originalRequest": {
+                "method": "DELETE",
+                "header": [
+                  {
+                    "key": "Authorization",
+                    "value": "Bearer {{authToken}}"
+                  }
+                ],
+                "url": {
+                  "raw": "{{baseUrl}}/transactions/txn_003",
+                  "host": ["{{baseUrl}}"],
+                  "path": ["transactions", "txn_003"]
+                }
+              },
+              "status": "OK",
+              "code": 200,
+              "_postman_previewlanguage": "json",
+              "header": [
+                {
+                  "key": "Content-Type",
+                  "value": "application/json"
+                }
+              ],
+              "body": "{\n  \"success\": true,\n  \"message\": \"Transaction deleted successfully\"\n}"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "name": "Expenses",
+      "description": "Expense tracking - CRUD operations for business expenses",
+      "item": [
+        {
+          "name": "Get All Expenses",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{authToken}}"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/expenses",
+              "host": ["{{baseUrl}}"],
+              "path": ["expenses"]
+            },
+            "description": "Retrieve all expenses.\n\n**Authentication:** Required"
+          },
+          "response": [
+            {
+              "name": "Success Response",
+              "originalRequest": {
+                "method": "GET",
+                "header": [
+                  {
+                    "key": "Authorization",
+                    "value": "Bearer {{authToken}}"
+                  }
+                ],
+                "url": {
+                  "raw": "{{baseUrl}}/expenses",
+                  "host": ["{{baseUrl}}"],
+                  "path": ["expenses"]
+                }
+              },
+              "status": "OK",
+              "code": 200,
+              "_postman_previewlanguage": "json",
+              "header": [
+                {
+                  "key": "Content-Type",
+                  "value": "application/json"
+                }
+              ],
+              "body": "{\n  \"success\": true,\n  \"data\": [\n    {\n      \"id\": \"exp_001\",\n      \"category\": \"Software\",\n      \"amount\": 299,\n      \"date\": \"2024-01-10T00:00:00.000Z\",\n      \"vendor\": \"Adobe Creative Cloud\",\n      \"description\": \"Monthly subscription for design tools\",\n      \"receiptURL\": \"https://storage.googleapis.com/omena-crm/receipts/adobe_jan2024.pdf\",\n      \"status\": \"approved\",\n      \"createdAt\": \"2024-01-10T08:00:00.000Z\",\n      \"updatedAt\": \"2024-01-10T08:00:00.000Z\"\n    },\n    {\n      \"id\": \"exp_002\",\n      \"category\": \"Office Supplies\",\n      \"amount\": 145.50,\n      \"date\": \"2024-01-12T00:00:00.000Z\",\n      \"vendor\": \"Office Depot\",\n      \"description\": \"Office supplies and printer paper\",\n      \"receiptURL\": null,\n      \"status\": \"pending\",\n      \"createdAt\": \"2024-01-12T14:30:00.000Z\",\n      \"updatedAt\": \"2024-01-12T14:30:00.000Z\"\n    }\n  ],\n  \"count\": 2\n}"
+            }
+          ]
+        },
+        {
+          "name": "Get Expense by ID",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{authToken}}"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/expenses/{{expenseId}}",
+              "host": ["{{baseUrl}}"],
+              "path": ["expenses", "{{expenseId}}"]
+            },
+            "description": "Retrieve a specific expense by ID.\n\n**Authentication:** Required"
+          },
+          "response": [
+            {
+              "name": "Success Response",
+              "originalRequest": {
+                "method": "GET",
+                "header": [
+                  {
+                    "key": "Authorization",
+                    "value": "Bearer {{authToken}}"
+                  }
+                ],
+                "url": {
+                  "raw": "{{baseUrl}}/expenses/exp_001",
+                  "host": ["{{baseUrl}}"],
+                  "path": ["expenses", "exp_001"]
+                }
+              },
+              "status": "OK",
+              "code": 200,
+              "_postman_previewlanguage": "json",
+              "header": [
+                {
+                  "key": "Content-Type",
+                  "value": "application/json"
+                }
+              ],
+              "body": "{\n  \"success\": true,\n  \"data\": {\n    \"id\": \"exp_001\",\n    \"category\": \"Software\",\n    \"amount\": 299,\n    \"date\": \"2024-01-10T00:00:00.000Z\",\n    \"vendor\": \"Adobe Creative Cloud\",\n    \"description\": \"Monthly subscription for design tools\",\n    \"receiptURL\": \"https://storage.googleapis.com/omena-crm/receipts/adobe_jan2024.pdf\",\n    \"status\": \"approved\",\n    \"createdAt\": \"2024-01-10T08:00:00.000Z\",\n    \"updatedAt\": \"2024-01-10T08:00:00.000Z\"\n  }\n}"
+            }
+          ]
+        },
+        {
+          "name": "Create Expense",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "if (pm.response.code === 201) {",
+                  "    const response = pm.response.json();",
+                  "    if (response.success && response.data && response.data.id) {",
+                  "        pm.collectionVariables.set('expenseId', response.data.id);",
+                  "        console.log('✅ Expense created with ID:', response.data.id);",
+                  "    }",
+                  "}"
+                ],
+                "type": "text/javascript"
+              }
+            }
+          ],
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{authToken}}"
+              },
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"category\": \"Marketing\",\n  \"amount\": 450,\n  \"date\": \"2024-01-15T00:00:00.000Z\",\n  \"vendor\": \"Google Ads\",\n  \"description\": \"Q1 advertising campaign\",\n  \"receiptURL\": null,\n  \"status\": \"pending\"\n}"
+            },
+            "url": {
+              "raw": "{{baseUrl}}/expenses",
+              "host": ["{{baseUrl}}"],
+              "path": ["expenses"]
+            },
+            "description": "Create a new expense.\n\n**Authentication:** Required\n\n**Required Fields:**\n- category: Expense category\n- amount: Expense amount\n- date: Expense date\n- vendor: Vendor name\n\n**Optional Fields:**\n- description\n- receiptURL: URL to receipt file\n- status (default: 'pending')"
+          },
+          "response": [
+            {
+              "name": "Success Response",
+              "originalRequest": {
+                "method": "POST",
+                "header": [
+                  {
+                    "key": "Authorization",
+                    "value": "Bearer {{authToken}}"
+                  },
+                  {
+                    "key": "Content-Type",
+                    "value": "application/json"
+                  }
+                ],
+                "body": {
+                  "mode": "raw",
+                  "raw": "{\n  \"category\": \"Marketing\",\n  \"amount\": 450,\n  \"date\": \"2024-01-15T00:00:00.000Z\",\n  \"vendor\": \"Google Ads\",\n  \"description\": \"Q1 advertising campaign\",\n  \"receiptURL\": null,\n  \"status\": \"pending\"\n}"
+                },
+                "url": {
+                  "raw": "{{baseUrl}}/expenses",
+                  "host": ["{{baseUrl}}"],
+                  "path": ["expenses"]
+                }
+              },
+              "status": "Created",
+              "code": 201,
+              "_postman_previewlanguage": "json",
+              "header": [
+                {
+                  "key": "Content-Type",
+                  "value": "application/json"
+                }
+              ],
+              "body": "{\n  \"success\": true,\n  \"message\": \"Expense created successfully\",\n  \"data\": {\n    \"id\": \"exp_003\",\n    \"category\": \"Marketing\",\n    \"amount\": 450,\n    \"date\": \"2024-01-15T00:00:00.000Z\",\n    \"vendor\": \"Google Ads\",\n    \"description\": \"Q1 advertising campaign\",\n    \"receiptURL\": null,\n    \"status\": \"pending\",\n    \"createdAt\": \"2024-01-15T10:00:00.000Z\",\n    \"updatedAt\": \"2024-01-15T10:00:00.000Z\"\n  }\n}"
+            }
+          ]
+        },
+        {
+          "name": "Update Expense",
+          "request": {
+            "method": "PUT",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{authToken}}"
+              },
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"status\": \"approved\",\n  \"receiptURL\": \"https://storage.googleapis.com/omena-crm/receipts/google_ads_jan2024.pdf\"\n}"
+            },
+            "url": {
+              "raw": "{{baseUrl}}/expenses/{{expenseId}}",
+              "host": ["{{baseUrl}}"],
+              "path": ["expenses", "{{expenseId}}"]
+            },
+            "description": "Update expense information.\n\n**Authentication:** Required"
+          },
+          "response": [
+            {
+              "name": "Success Response",
+              "originalRequest": {
+                "method": "PUT",
+                "header": [
+                  {
+                    "key": "Authorization",
+                    "value": "Bearer {{authToken}}"
+                  },
+                  {
+                    "key": "Content-Type",
+                    "value": "application/json"
+                  }
+                ],
+                "body": {
+                  "mode": "raw",
+                  "raw": "{\n  \"status\": \"approved\",\n  \"receiptURL\": \"https://storage.googleapis.com/omena-crm/receipts/google_ads_jan2024.pdf\"\n}"
+                },
+                "url": {
+                  "raw": "{{baseUrl}}/expenses/exp_003",
+                  "host": ["{{baseUrl}}"],
+                  "path": ["expenses", "exp_003"]
+                }
+              },
+              "status": "OK",
+              "code": 200,
+              "_postman_previewlanguage": "json",
+              "header": [
+                {
+                  "key": "Content-Type",
+                  "value": "application/json"
+                }
+              ],
+              "body": "{\n  \"success\": true,\n  \"message\": \"Expense updated successfully\",\n  \"data\": {\n    \"id\": \"exp_003\",\n    \"category\": \"Marketing\",\n    \"amount\": 450,\n    \"date\": \"2024-01-15T00:00:00.000Z\",\n    \"vendor\": \"Google Ads\",\n    \"description\": \"Q1 advertising campaign\",\n    \"receiptURL\": \"https://storage.googleapis.com/omena-crm/receipts/google_ads_jan2024.pdf\",\n    \"status\": \"approved\",\n    \"updatedAt\": \"2024-01-15T14:00:00.000Z\"\n  }\n}"
+            }
+          ]
+        },
+        {
+          "name": "Delete Expense",
+          "request": {
+            "method": "DELETE",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{authToken}}"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/expenses/{{expenseId}}",
+              "host": ["{{baseUrl}}"],
+              "path": ["expenses", "{{expenseId}}"]
+            },
+            "description": "Delete an expense.\n\n**Authentication:** Required\n**Note:** This is a soft delete - expense status is set to 'deleted'"
+          },
+          "response": [
+            {
+              "name": "Success Response",
+              "originalRequest": {
+                "method": "DELETE",
+                "header": [
+                  {
+                    "key": "Authorization",
+                    "value": "Bearer {{authToken}}"
+                  }
+                ],
+                "url": {
+                  "raw": "{{baseUrl}}/expenses/exp_003",
+                  "host": ["{{baseUrl}}"],
+                  "path": ["expenses", "exp_003"]
+                }
+              },
+              "status": "OK",
+              "code": 200,
+              "_postman_previewlanguage": "json",
+              "header": [
+                {
+                  "key": "Content-Type",
+                  "value": "application/json"
+                }
+              ],
+              "body": "{\n  \"success\": true,\n  \"message\": \"Expense deleted successfully\"\n}"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "name": "Receipts",
+      "description": "Receipt management - CRUD operations for customer receipts",
+      "item": [
+        {
+          "name": "Get All Receipts",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{authToken}}"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/receipts",
+              "host": ["{{baseUrl}}"],
+              "path": ["receipts"]
+            },
+            "description": "Retrieve all receipts.\n\n**Authentication:** Required"
+          },
+          "response": [
+            {
+              "name": "Success Response",
+              "originalRequest": {
+                "method": "GET",
+                "header": [
+                  {
+                    "key": "Authorization",
+                    "value": "Bearer {{authToken}}"
+                  }
+                ],
+                "url": {
+                  "raw": "{{baseUrl}}/receipts",
+                  "host": ["{{baseUrl}}"],
+                  "path": ["receipts"]
+                }
+              },
+              "status": "OK",
+              "code": 200,
+              "_postman_previewlanguage": "json",
+              "header": [
+                {
+                  "key": "Content-Type",
+                  "value": "application/json"
+                }
+              ],
+              "body": "{\n  \"success\": true,\n  \"data\": [\n    {\n      \"id\": \"rcp_001\",\n      \"customerId\": \"cust_001\",\n      \"transactionId\": \"txn_001\",\n      \"amount\": 5000,\n      \"date\": \"2024-01-15T10:00:00.000Z\",\n      \"receiptNumber\": \"RCP-2024-001\",\n      \"fileURL\": \"https://storage.googleapis.com/omena-crm/receipts/RCP-2024-001.pdf\",\n      \"status\": \"sent\",\n      \"notes\": \"Website development project - Full payment\",\n      \"createdAt\": \"2024-01-15T10:30:00.000Z\",\n      \"updatedAt\": \"2024-01-15T10:30:00.000Z\"\n    },\n    {\n      \"id\": \"rcp_002\",\n      \"customerId\": \"cust_002\",\n      \"transactionId\": \"txn_002\",\n      \"amount\": 3000,\n      \"date\": \"2024-01-16T14:30:00.000Z\",\n      \"receiptNumber\": \"RCP-2024-002\",\n      \"fileURL\": null,\n      \"status\": \"draft\",\n      \"notes\": \"Monthly marketing retainer - January\",\n      \"createdAt\": \"2024-01-16T15:00:00.000Z\",\n      \"updatedAt\": \"2024-01-16T15:00:00.000Z\"\n    }\n  ],\n  \"count\": 2\n}"
+            }
+          ]
+        },
+        {
+          "name": "Get Receipt by ID",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{authToken}}"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/receipts/{{receiptId}}",
+              "host": ["{{baseUrl}}"],
+              "path": ["receipts", "{{receiptId}}"]
+            },
+            "description": "Retrieve a specific receipt by ID.\n\n**Authentication:** Required"
+          },
+          "response": [
+            {
+              "name": "Success Response",
+              "originalRequest": {
+                "method": "GET",
+                "header": [
+                  {
+                    "key": "Authorization",
+                    "value": "Bearer {{authToken}}"
+                  }
+                ],
+                "url": {
+                  "raw": "{{baseUrl}}/receipts/rcp_001",
+                  "host": ["{{baseUrl}}"],
+                  "path": ["receipts", "rcp_001"]
+                }
+              },
+              "status": "OK",
+              "code": 200,
+              "_postman_previewlanguage": "json",
+              "header": [
+                {
+                  "key": "Content-Type",
+                  "value": "application/json"
+                }
+              ],
+              "body": "{\n  \"success\": true,\n  \"data\": {\n    \"id\": \"rcp_001\",\n    \"customerId\": \"cust_001\",\n    \"transactionId\": \"txn_001\",\n    \"amount\": 5000,\n    \"date\": \"2024-01-15T10:00:00.000Z\",\n    \"receiptNumber\": \"RCP-2024-001\",\n    \"fileURL\": \"https://storage.googleapis.com/omena-crm/receipts/RCP-2024-001.pdf\",\n    \"status\": \"sent\",\n    \"notes\": \"Website development project - Full payment\",\n    \"createdAt\": \"2024-01-15T10:30:00.000Z\",\n    \"updatedAt\": \"2024-01-15T10:30:00.000Z\"\n  }\n}"
+            }
+          ]
+        },
+        {
+          "name": "Create Receipt",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "if (pm.response.code === 201) {",
+                  "    const response = pm.response.json();",
+                  "    if (response.success && response.data && response.data.id) {",
+                  "        pm.collectionVariables.set('receiptId', response.data.id);",
+                  "        console.log('✅ Receipt created with ID:', response.data.id);",
+                  "    }",
+                  "}"
+                ],
+                "type": "text/javascript"
+              }
+            }
+          ],
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{authToken}}"
+              },
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"customerId\": \"cust_003\",\n  \"transactionId\": \"txn_003\",\n  \"amount\": 2500,\n  \"date\": \"2024-01-17T09:00:00.000Z\",\n  \"receiptNumber\": \"RCP-2024-003\",\n  \"fileURL\": null,\n  \"status\": \"draft\",\n  \"notes\": \"Brand identity design - 50% deposit\"\n}"
+            },
+            "url": {
+              "raw": "{{baseUrl}}/receipts",
+              "host": ["{{baseUrl}}"],
+              "path": ["receipts"]
+            },
+            "description": "Create a new receipt.\n\n**Authentication:** Required\n\n**Required Fields:**\n- customerId: ID of the customer\n- transactionId: ID of the transaction\n- amount: Receipt amount\n- date: Receipt date\n- receiptNumber: Unique receipt number\n\n**Optional Fields:**\n- fileURL: URL to generated receipt PDF\n- status (default: 'draft')\n- notes"
+          },
+          "response": [
+            {
+              "name": "Success Response",
+              "originalRequest": {
+                "method": "POST",
+                "header": [
+                  {
+                    "key": "Authorization",
+                    "value": "Bearer {{authToken}}"
+                  },
+                  {
+                    "key": "Content-Type",
+                    "value": "application/json"
+                  }
+                ],
+                "body": {
+                  "mode": "raw",
+                  "raw": "{\n  \"customerId\": \"cust_003\",\n  \"transactionId\": \"txn_003\",\n  \"amount\": 2500,\n  \"date\": \"2024-01-17T09:00:00.000Z\",\n  \"receiptNumber\": \"RCP-2024-003\",\n  \"fileURL\": null,\n  \"status\": \"draft\",\n  \"notes\": \"Brand identity design - 50% deposit\"\n}"
+                },
+                "url": {
+                  "raw": "{{baseUrl}}/receipts",
+                  "host": ["{{baseUrl}}"],
+                  "path": ["receipts"]
+                }
+              },
+              "status": "Created",
+              "code": 201,
+              "_postman_previewlanguage": "json",
+              "header": [
+                {
+                  "key": "Content-Type",
+                  "value": "application/json"
+                }
+              ],
+              "body": "{\n  \"success\": true,\n  \"message\": \"Receipt created successfully\",\n  \"data\": {\n    \"id\": \"rcp_003\",\n    \"customerId\": \"cust_003\",\n    \"transactionId\": \"txn_003\",\n    \"amount\": 2500,\n    \"date\": \"2024-01-17T09:00:00.000Z\",\n    \"receiptNumber\": \"RCP-2024-003\",\n    \"fileURL\": null,\n    \"status\": \"draft\",\n    \"notes\": \"Brand identity design - 50% deposit\",\n    \"createdAt\": \"2024-01-17T09:30:00.000Z\",\n    \"updatedAt\": \"2024-01-17T09:30:00.000Z\"\n  }\n}"
+            }
+          ]
+        },
+        {
+          "name": "Update Receipt",
+          "request": {
+            "method": "PUT",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{authToken}}"
+              },
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"status\": \"sent\",\n  \"fileURL\": \"https://storage.googleapis.com/omena-crm/receipts/RCP-2024-003.pdf\"\n}"
+            },
+            "url": {
+              "raw": "{{baseUrl}}/receipts/{{receiptId}}",
+              "host": ["{{baseUrl}}"],
+              "path": ["receipts", "{{receiptId}}"]
+            },
+            "description": "Update receipt information.\n\n**Authentication:** Required"
+          },
+          "response": [
+            {
+              "name": "Success Response",
+              "originalRequest": {
+                "method": "PUT",
+                "header": [
+                  {
+                    "key": "Authorization",
+                    "value": "Bearer {{authToken}}"
+                  },
+                  {
+                    "key": "Content-Type",
+                    "value": "application/json"
+                  }
+                ],
+                "body": {
+                  "mode": "raw",
+                  "raw": "{\n  \"status\": \"sent\",\n  \"fileURL\": \"https://storage.googleapis.com/omena-crm/receipts/RCP-2024-003.pdf\"\n}"
+                },
+                "url": {
+                  "raw": "{{baseUrl}}/receipts/rcp_003",
+                  "host": ["{{baseUrl}}"],
+                  "path": ["receipts", "rcp_003"]
+                }
+              },
+              "status": "OK",
+              "code": 200,
+              "_postman_previewlanguage": "json",
+              "header": [
+                {
+                  "key": "Content-Type",
+                  "value": "application/json"
+                }
+              ],
+              "body": "{\n  \"success\": true,\n  \"message\": \"Receipt updated successfully\",\n  \"data\": {\n    \"id\": \"rcp_003\",\n    \"customerId\": \"cust_003\",\n    \"transactionId\": \"txn_003\",\n    \"amount\": 2500,\n    \"date\": \"2024-01-17T09:00:00.000Z\",\n    \"receiptNumber\": \"RCP-2024-003\",\n    \"fileURL\": \"https://storage.googleapis.com/omena-crm/receipts/RCP-2024-003.pdf\",\n    \"status\": \"sent\",\n    \"notes\": \"Brand identity design - 50% deposit\",\n    \"updatedAt\": \"2024-01-17T10:00:00.000Z\"\n  }\n}"
+            }
+          ]
+        },
+        {
+          "name": "Delete Receipt",
+          "request": {
+            "method": "DELETE",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{authToken}}"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/receipts/{{receiptId}}",
+              "host": ["{{baseUrl}}"],
+              "path": ["receipts", "{{receiptId}}"]
+            },
+            "description": "Delete a receipt.\n\n**Authentication:** Required\n**Note:** This is a soft delete - receipt status is set to 'deleted'"
+          },
+          "response": [
+            {
+              "name": "Success Response",
+              "originalRequest": {
+                "method": "DELETE",
+                "header": [
+                  {
+                    "key": "Authorization",
+                    "value": "Bearer {{authToken}}"
+                  }
+                ],
+                "url": {
+                  "raw": "{{baseUrl}}/receipts/rcp_003",
+                  "host": ["{{baseUrl}}"],
+                  "path": ["receipts", "rcp_003"]
+                }
+              },
+              "status": "OK",
+              "code": 200,
+              "_postman_previewlanguage": "json",
+              "header": [
+                {
+                  "key": "Content-Type",
+                  "value": "application/json"
+                }
+              ],
+              "body": "{\n  \"success\": true,\n  \"message\": \"Receipt deleted successfully\"\n}"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "name": "Team Members",
+      "description": "Team management - CRUD operations for team members",
+      "item": [
+        {
+          "name": "Get All Team Members",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{authToken}}"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/team",
+              "host": ["{{baseUrl}}"],
+              "path": ["team"]
+            },
+            "description": "Retrieve all team members.\n\n**Authentication:** Required"
+          },
+          "response": [
+            {
+              "name": "Success Response",
+              "originalRequest": {
+                "method": "GET",
+                "header": [
+                  {
+                    "key": "Authorization",
+                    "value": "Bearer {{authToken}}"
+                  }
+                ],
+                "url": {
+                  "raw": "{{baseUrl}}/team",
+                  "host": ["{{baseUrl}}"],
+                  "path": ["team"]
+                }
+              },
+              "status": "OK",
+              "code": 200,
+              "_postman_previewlanguage": "json",
+              "header": [
+                {
+                  "key": "Content-Type",
+                  "value": "application/json"
+                }
+              ],
+              "body": "{\n  \"success\": true,\n  \"data\": [\n    {\n      \"id\": \"team_001\",\n      \"firstName\": \"Michael\",\n      \"lastName\": \"Chen\",\n      \"email\": \"michael.chen@omena.com\",\n      \"role\": \"Senior Developer\",\n      \"department\": \"Engineering\",\n      \"phoneNumber\": \"+1234567890\",\n      \"photoURL\": \"https://storage.googleapis.com/omena-crm/team/michael_chen.jpg\",\n      \"status\": \"active\",\n      \"hireDate\": \"2023-06-15T00:00:00.000Z\",\n      \"salary\": 85000,\n      \"createdAt\": \"2023-06-15T08:00:00.000Z\",\n      \"updatedAt\": \"2024-01-10T10:00:00.000Z\"\n    },\n    {\n      \"id\": \"team_002\",\n      \"firstName\": \"Emily\",\n      \"lastName\": \"Rodriguez\",\n      \"email\": \"emily.rodriguez@omena.com\",\n      \"role\": \"UX Designer\",\n      \"department\": \"Design\",\n      \"phoneNumber\": \"+1987654321\",\n      \"photoURL\": \"https://storage.googleapis.com/omena-crm/team/emily_rodriguez.jpg\",\n      \"status\": \"active\",\n      \"hireDate\": \"2023-08-01T00:00:00.000Z\",\n      \"salary\": 75000,\n      \"createdAt\": \"2023-08-01T08:00:00.000Z\",\n      \"updatedAt\": \"2024-01-12T14:30:00.000Z\"\n    }\n  ],\n  \"count\": 2\n}"
+            }
+          ]
+        },
+        {
+          "name": "Get Team Member by ID",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{authToken}}"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/team/{{teamMemberId}}",
+              "host": ["{{baseUrl}}"],
+              "path": ["team", "{{teamMemberId}}"]
+            },
+            "description": "Retrieve a specific team member by ID.\n\n**Authentication:** Required"
+          },
+          "response": [
+            {
+              "name": "Success Response",
+              "originalRequest": {
+                "method": "GET",
+                "header": [
+                  {
+                    "key": "Authorization",
+                    "value": "Bearer {{authToken}}"
+                  }
+                ],
+                "url": {
+                  "raw": "{{baseUrl}}/team/team_001",
+                  "host": ["{{baseUrl}}"],
+                  "path": ["team", "team_001"]
+                }
+              },
+              "status": "OK",
+              "code": 200,
+              "_postman_previewlanguage": "json",
+              "header": [
+                {
+                  "key": "Content-Type",
+                  "value": "application/json"
+                }
+              ],
+              "body": "{\n  \"success\": true,\n  \"data\": {\n    \"id\": \"team_001\",\n    \"firstName\": \"Michael\",\n    \"lastName\": \"Chen\",\n    \"email\": \"michael.chen@omena.com\",\n    \"role\": \"Senior Developer\",\n    \"department\": \"Engineering\",\n    \"phoneNumber\": \"+1234567890\",\n    \"photoURL\": \"https://storage.googleapis.com/omena-crm/team/michael_chen.jpg\",\n    \"status\": \"active\",\n    \"hireDate\": \"2023-06-15T00:00:00.000Z\",\n    \"salary\": 85000,\n    \"createdAt\": \"2023-06-15T08:00:00.000Z\",\n    \"updatedAt\": \"2024-01-10T10:00:00.000Z\"\n  }\n}"
+            }
+          ]
+        },
+        {
+          "name": "Create Team Member",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "if (pm.response.code === 201) {",
+                  "    const response = pm.response.json();",
+                  "    if (response.success && response.data && response.data.id) {",
+                  "        pm.collectionVariables.set('teamMemberId', response.data.id);",
+                  "        console.log('✅ Team member created with ID:', response.data.id);",
+                  "    }",
+                  "}"
+                ],
+                "type": "text/javascript"
+              }
+            }
+          ],
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{authToken}}"
+              },
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"firstName\": \"David\",\n  \"lastName\": \"Thompson\",\n  \"email\": \"david.thompson@omena.com\",\n  \"role\": \"Marketing Manager\",\n  \"department\": \"Marketing\",\n  \"phoneNumber\": \"+1555987654\",\n  \"photoURL\": null,\n  \"status\": \"active\",\n  \"hireDate\": \"2024-01-15T00:00:00.000Z\",\n  \"salary\": 70000\n}"
+            },
+            "url": {
+              "raw": "{{baseUrl}}/team",
+              "host": ["{{baseUrl}}"],
+              "path": ["team"]
+            },
+            "description": "Create a new team member.\n\n**Authentication:** Required\n\n**Required Fields:**\n- firstName\n- lastName\n- email\n- role\n- department\n\n**Optional Fields:**\n- phoneNumber\n- photoURL\n- status (default: 'active')\n- hireDate\n- salary"
+          },
+          "response": [
+            {
+              "name": "Success Response",
+              "originalRequest": {
+                "method": "POST",
+                "header": [
+                  {
+                    "key": "Authorization",
+                    "value": "Bearer {{authToken}}"
+                  },
+                  {
+                    "key": "Content-Type",
+                    "value": "application/json"
+                  }
+                ],
+                "body": {
+                  "mode": "raw",
+                  "raw": "{\n  \"firstName\": \"David\",\n  \"lastName\": \"Thompson\",\n  \"email\": \"david.thompson@omena.com\",\n  \"role\": \"Marketing Manager\",\n  \"department\": \"Marketing\",\n  \"phoneNumber\": \"+1555987654\",\n  \"photoURL\": null,\n  \"status\": \"active\",\n  \"hireDate\": \"2024-01-15T00:00:00.000Z\",\n  \"salary\": 70000\n}"
+                },
+                "url": {
+                  "raw": "{{baseUrl}}/team",
+                  "host": ["{{baseUrl}}"],
+                  "path": ["team"]
+                }
+              },
+              "status": "Created",
+              "code": 201,
+              "_postman_previewlanguage": "json",
+              "header": [
+                {
+                  "key": "Content-Type",
+                  "value": "application/json"
+                }
+              ],
+              "body": "{\n  \"success\": true,\n  \"message\": \"Team member created successfully\",\n  \"data\": {\n    \"id\": \"team_003\",\n    \"firstName\": \"David\",\n    \"lastName\": \"Thompson\",\n    \"email\": \"david.thompson@omena.com\",\n    \"role\": \"Marketing Manager\",\n    \"department\": \"Marketing\",\n    \"phoneNumber\": \"+1555987654\",\n    \"photoURL\": null,\n    \"status\": \"active\",\n    \"hireDate\": \"2024-01-15T00:00:00.000Z\",\n    \"salary\": 70000,\n    \"createdAt\": \"2024-01-15T12:00:00.000Z\",\n    \"updatedAt\": \"2024-01-15T12:00:00.000Z\"\n  }\n}"
+            }
+          ]
+        },
+        {
+          "name": "Update Team Member",
+          "request": {
+            "method": "PUT",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{authToken}}"
+              },
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"role\": \"Senior Marketing Manager\",\n  \"salary\": 80000,\n  \"photoURL\": \"https://storage.googleapis.com/omena-crm/team/david_thompson.jpg\"\n}"
+            },
+            "url": {
+              "raw": "{{baseUrl}}/team/{{teamMemberId}}",
+              "host": ["{{baseUrl}}"],
+              "path": ["team", "{{teamMemberId}}"]
+            },
+            "description": "Update team member information.\n\n**Authentication:** Required"
+          },
+          "response": [
+            {
+              "name": "Success Response",
+              "originalRequest": {
+                "method": "PUT",
+                "header": [
+                  {
+                    "key": "Authorization",
+                    "value": "Bearer {{authToken}}"
+                  },
+                  {
+                    "key": "Content-Type",
+                    "value": "application/json"
+                  }
+                ],
+                "body": {
+                  "mode": "raw",
+                  "raw": "{\n  \"role\": \"Senior Marketing Manager\",\n  \"salary\": 80000,\n  \"photoURL\": \"https://storage.googleapis.com/omena-crm/team/david_thompson.jpg\"\n}"
+                },
+                "url": {
+                  "raw": "{{baseUrl}}/team/team_003",
+                  "host": ["{{baseUrl}}"],
+                  "path": ["team", "team_003"]
+                }
+              },
+              "status": "OK",
+              "code": 200,
+              "_postman_previewlanguage": "json",
+              "header": [
+                {
+                  "key": "Content-Type",
+                  "value": "application/json"
+                }
+              ],
+              "body": "{\n  \"success\": true,\n  \"message\": \"Team member updated successfully\",\n  \"data\": {\n    \"id\": \"team_003\",\n    \"firstName\": \"David\",\n    \"lastName\": \"Thompson\",\n    \"email\": \"david.thompson@omena.com\",\n    \"role\": \"Senior Marketing Manager\",\n    \"department\": \"Marketing\",\n    \"phoneNumber\": \"+1555987654\",\n    \"photoURL\": \"https://storage.googleapis.com/omena-crm/team/david_thompson.jpg\",\n    \"status\": \"active\",\n    \"hireDate\": \"2024-01-15T00:00:00.000Z\",\n    \"salary\": 80000,\n    \"updatedAt\": \"2024-01-15T16:00:00.000Z\"\n  }\n}"
+            }
+          ]
+        },
+        {
+          "name": "Delete Team Member",
+          "request": {
+            "method": "DELETE",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{authToken}}"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/team/{{teamMemberId}}",
+              "host": ["{{baseUrl}}"],
+              "path": ["team", "{{teamMemberId}}"]
+            },
+            "description": "Delete a team member.\n\n**Authentication:** Required\n**Note:** This is a soft delete - team member status is set to 'deleted'"
+          },
+          "response": [
+            {
+              "name": "Success Response",
+              "originalRequest": {
+                "method": "DELETE",
+                "header": [
+                  {
+                    "key": "Authorization",
+                    "value": "Bearer {{authToken}}"
+                  }
+                ],
+                "url": {
+                  "raw": "{{baseUrl}}/team/team_003",
+                  "host": ["{{baseUrl}}"],
+                  "path": ["team", "team_003"]
+                }
+              },
+              "status": "OK",
+              "code": 200,
+              "_postman_previewlanguage": "json",
+              "header": [
+                {
+                  "key": "Content-Type",
+                  "value": "application/json"
+                }
+              ],
+              "body": "{\n  \"success\": true,\n  \"message\": \"Team member deleted successfully\"\n}"
+            }
+          ]
+        }
+      ]
+    }
+  ]
+}
