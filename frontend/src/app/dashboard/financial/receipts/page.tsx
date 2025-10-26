@@ -2,6 +2,6 @@
 
 import { PageSkeleton } from '@/components/SkeletonLoader';
 
-export default function Page() {
+export default function ReceiptsPage() {
   return <PageSkeleton />;
 }

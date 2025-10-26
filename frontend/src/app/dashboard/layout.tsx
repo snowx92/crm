@@ -10,6 +10,7 @@ import { useEffect } from 'react';
 import { useRouter } from 'next/navigation';
 import { useAuth } from '@/lib/AuthContext';
 import Sidebar from '@/components/Sidebar';
+import Navbar from '@/components/Navbar';
 import { motion } from 'framer-motion';
 
 export default function DashboardLayout({
@@ -44,14 +45,17 @@ export default function DashboardLayout({
   return (
     <div className="flex min-h-screen bg-gray-50">
       <Sidebar />
-      <motion.main
-        initial={{ opacity: 0 }}
-        animate={{ opacity: 1 }}
-        transition={{ duration: 0.5 }}
-        className="flex-1 overflow-x-hidden"
-      >
-        {children}
-      </motion.main>
+      <div className="flex-1 flex flex-col overflow-x-hidden">
+        <Navbar />
+        <motion.main
+          initial={{ opacity: 0 }}
+          animate={{ opacity: 1 }}
+          transition={{ duration: 0.5 }}
+          className="flex-1"
+        >
+          {children}
+        </motion.main>
+      </div>
     </div>
   );
 }

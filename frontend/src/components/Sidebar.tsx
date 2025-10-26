@@ -1,10 +1,14 @@
 'use client';
 
 /**
- * Sidebar Component
+ * Enhanced Modern Sidebar Component
  *
- * A modern, animated sidebar with navigation links and smooth transitions.
- * Features collapsible design for mobile responsiveness.
+ * Features:
+ * - Clean modern design with light background
+ * - Primary color on hover and active states
+ * - Organized sections for better UX
+ * - Smooth animations and transitions
+ * - Mobile responsive with overlay
  */
 
 import { motion, AnimatePresence } from 'framer-motion';
@@ -12,18 +16,23 @@ import Link from 'next/link';
 import { usePathname } from 'next/navigation';
 import {
   LayoutDashboard,
-  Briefcase,
   Users,
   DollarSign,
-  CreditCard,
-  Receipt,
-  UserCircle,
+  Package,
+  FolderKanban,
+  UsersRound,
+  CalendarDays,
+  HardDrive,
+  Wrench,
   Settings,
   LogOut,
   Menu,
   X,
   Sparkles,
-  ChevronRight,
+  Receipt,
+  FileText,
+  Utensils,
+  Wallet,
 } from 'lucide-react';
 import { useAuth } from '@/lib/AuthContext';
 import { useState } from 'react';
@@ -32,56 +41,94 @@ interface NavItem {
   name: string;
   path: string;
   icon: React.ReactNode;
-  comingSoon?: boolean;
+  badge?: string;
 }
 
-const navItems: NavItem[] = [
+interface NavSection {
+  title: string;
+  items: NavItem[];
+}
+
+const navSections: NavSection[] = [
   {
-    name: 'Dashboard',
-    path: '/dashboard',
-    icon: <LayoutDashboard className="w-5 h-5" />,
+    title: 'Main',
+    items: [
+      {
+        name: 'Overview',
+        path: '/dashboard',
+        icon: <LayoutDashboard className="w-5 h-5" />,
+      },
+      {
+        name: 'Customers',
+        path: '/dashboard/customers',
+        icon: <Users className="w-5 h-5" />,
+      },
+    ],
   },
   {
-    name: 'Services',
-    path: '/dashboard/services',
-    icon: <Briefcase className="w-5 h-5" />,
-    comingSoon: true,
+    title: 'Financial',
+    items: [
+      {
+        name: 'Receipts',
+        path: '/dashboard/financial/receipts',
+        icon: <Receipt className="w-5 h-5" />,
+      },
+      {
+        name: 'Quotations',
+        path: '/dashboard/financial/quotations',
+        icon: <FileText className="w-5 h-5" />,
+      },
+      {
+        name: 'Menu',
+        path: '/dashboard/financial/menu',
+        icon: <Utensils className="w-5 h-5" />,
+      },
+      {
+        name: 'Expenses',
+        path: '/dashboard/financial/expenses',
+        icon: <Wallet className="w-5 h-5" />,
+      },
+    ],
   },
   {
-    name: 'Team Members',
-    path: '/dashboard/team',
-    icon: <Users className="w-5 h-5" />,
-    comingSoon: true,
+    title: 'Operations',
+    items: [
+      {
+        name: 'Services',
+        path: '/dashboard/services',
+        icon: <Package className="w-5 h-5" />,
+      },
+      {
+        name: 'Projects',
+        path: '/dashboard/projects',
+        icon: <FolderKanban className="w-5 h-5" />,
+      },
+      {
+        name: 'Team',
+        path: '/dashboard/team',
+        icon: <UsersRound className="w-5 h-5" />,
+      },
+    ],
   },
   {
-    name: 'Expenses',
-    path: '/dashboard/expenses',
-    icon: <DollarSign className="w-5 h-5" />,
-    comingSoon: true,
-  },
-  {
-    name: 'Transactions',
-    path: '/dashboard/transactions',
-    icon: <CreditCard className="w-5 h-5" />,
-    comingSoon: true,
-  },
-  {
-    name: 'Receipts',
-    path: '/dashboard/receipts',
-    icon: <Receipt className="w-5 h-5" />,
-    comingSoon: true,
-  },
-  {
-    name: 'Customers',
-    path: '/dashboard/customers',
-    icon: <UserCircle className="w-5 h-5" />,
-    comingSoon: true,
-  },
-  {
-    name: 'Settings',
-    path: '/dashboard/settings',
-    icon: <Settings className="w-5 h-5" />,
-    comingSoon: true,
+    title: 'Productivity',
+    items: [
+      {
+        name: 'Tasks & Calendar',
+        path: '/dashboard/tasks',
+        icon: <CalendarDays className="w-5 h-5" />,
+      },
+      {
+        name: 'Drive & Gallery',
+        path: '/dashboard/drive',
+        icon: <HardDrive className="w-5 h-5" />,
+      },
+      {
+        name: 'Tools',
+        path: '/dashboard/tools',
+        icon: <Wrench className="w-5 h-5" />,
+      },
+    ],
   },
 ];
 
@@ -99,7 +146,7 @@ export default function Sidebar() {
       {/* Mobile Menu Button */}
       <button
         onClick={() => setIsMobileMenuOpen(!isMobileMenuOpen)}
-        className="lg:hidden fixed top-4 left-4 z-50 p-3 bg-primary text-white rounded-lg shadow-lg hover:bg-primary-dark transition-colors"
+        className="lg:hidden fixed top-4 left-4 z-50 p-3 bg-white text-primary rounded-xl shadow-lg hover:shadow-xl transition-all hover:scale-105 active:scale-95"
       >
         {isMobileMenuOpen ? <X className="w-6 h-6" /> : <Menu className="w-6 h-6" />}
       </button>
@@ -112,7 +159,7 @@ export default function Sidebar() {
             animate={{ opacity: 1 }}
             exit={{ opacity: 0 }}
             onClick={() => setIsMobileMenuOpen(false)}
-            className="lg:hidden fixed inset-0 bg-black/50 z-40"
+            className="lg:hidden fixed inset-0 bg-black/50 backdrop-blur-sm z-40"
           />
         )}
       </AnimatePresence>
@@ -120,120 +167,115 @@ export default function Sidebar() {
       {/* Sidebar */}
       <motion.aside
         initial={{ x: -280 }}
-        animate={{ x: isMobileMenuOpen ? 0 : pathname.startsWith('/dashboard') ? 0 : -280 }}
-        className={`
-          fixed lg:sticky top-0 left-0 h-screen w-72 bg-gradient-to-b from-primary via-primary-dark to-primary
-          text-white z-40 flex flex-col shadow-2xl
-          lg:translate-x-0 transition-transform duration-300
-        `}
+        animate={{
+          x: isMobileMenuOpen || pathname.startsWith('/dashboard') ? 0 : -280
+        }}
+        className="fixed lg:sticky top-0 left-0 h-screen w-60 bg-white border-r border-gray-200 z-40 flex flex-col shadow-xl lg:shadow-none lg:translate-x-0 transition-transform duration-300"
       >
         {/* Logo Section */}
-        <div className="p-6 border-b border-white/10">
+        <div className="p-3 border-b border-gray-100">
           <motion.div
             whileHover={{ scale: 1.02 }}
-            className="flex items-center space-x-3"
+            className="flex items-center space-x-2 cursor-pointer"
           >
-            <div className="w-12 h-12 bg-secondary rounded-xl flex items-center justify-center shadow-lg">
-              <Sparkles className="w-7 h-7 text-primary" />
+            <div className="w-9 h-9 bg-gradient-to-br from-primary to-primary-dark rounded-lg flex items-center justify-center shadow-md">
+              <Sparkles className="w-5 h-5 text-secondary" />
             </div>
             <div>
-              <h2 className="text-xl font-bold">Omena Agency</h2>
-              <p className="text-xs text-white/60">CRM Dashboard</p>
+              <h2 className="text-base font-bold text-gray-900">Omena Agency</h2>
+              <p className="text-xs text-gray-500">CRM Dashboard</p>
             </div>
           </motion.div>
         </div>
 
-        {/* User Profile Section */}
-        <div className="p-6 border-b border-white/10">
-          <div className="flex items-center space-x-3">
-            <div className="w-10 h-10 bg-secondary/20 rounded-full flex items-center justify-center">
-              <UserCircle className="w-6 h-6 text-secondary" />
-            </div>
-            <div className="flex-1 min-w-0">
-              <p className="text-sm font-semibold truncate">
-                {user?.email?.split('@')[0] || 'User'}
-              </p>
-              <p className="text-xs text-white/60 truncate">{user?.email}</p>
-            </div>
-          </div>
-        </div>
-
-        {/* Navigation Links */}
-        <nav className="flex-1 p-4 overflow-y-auto custom-scrollbar">
-          <ul className="space-y-2">
-            {navItems.map((item, index) => {
-              const isActive = pathname === item.path;
-              return (
-                <motion.li
-                  key={item.path}
-                  initial={{ opacity: 0, x: -20 }}
-                  animate={{ opacity: 1, x: 0 }}
-                  transition={{ delay: index * 0.05 }}
-                >
-                  <Link
-                    href={item.path}
-                    onClick={() => setIsMobileMenuOpen(false)}
-                    className={`
-                      group relative flex items-center justify-between px-4 py-3 rounded-lg
-                      transition-all duration-300
-                      ${
-                        isActive
-                          ? 'bg-secondary text-primary shadow-lg'
-                          : 'hover:bg-white/10 text-white'
-                      }
-                    `}
-                  >
-                    <div className="flex items-center space-x-3">
-                      <span
-                        className={`
-                        transition-transform duration-300 group-hover:scale-110
-                        ${isActive ? 'text-primary' : 'text-white'}
-                      `}
+        {/* Navigation Sections */}
+        <nav className="flex-1 p-3 overflow-y-auto custom-scrollbar">
+          <div className="space-y-4">
+            {navSections.map((section, sectionIndex) => (
+              <div key={section.title}>
+                <h3 className="text-xs font-semibold text-gray-400 uppercase tracking-wider px-2 mb-1.5">
+                  {section.title}
+                </h3>
+                <ul className="space-y-0.5">
+                  {section.items.map((item, itemIndex) => {
+                    const isActive = pathname === item.path || pathname.startsWith(item.path + '/');
+                    return (
+                      <motion.li
+                        key={item.path}
+                        initial={{ opacity: 0, x: -20 }}
+                        animate={{ opacity: 1, x: 0 }}
+                        transition={{ delay: (sectionIndex * 0.1) + (itemIndex * 0.05) }}
                       >
-                        {item.icon}
-                      </span>
-                      <span className="font-medium">{item.name}</span>
-                    </div>
-
-                    {item.comingSoon ? (
-                      <span className="text-xs px-2 py-1 bg-white/10 rounded-full">
-                        Soon
-                      </span>
-                    ) : (
-                      isActive && (
-                        <motion.div
-                          initial={{ scale: 0 }}
-                          animate={{ scale: 1 }}
-                          transition={{ type: 'spring', stiffness: 500, damping: 30 }}
+                        <Link
+                          href={item.path}
+                          onClick={() => setIsMobileMenuOpen(false)}
+                          className={`
+                            group relative flex items-center justify-between px-2 py-1.5 rounded-lg text-sm
+                            transition-all duration-200
+                            ${
+                              isActive
+                                ? 'bg-primary text-white shadow-md shadow-primary/20'
+                                : 'text-gray-700 hover:bg-primary/10 hover:text-primary'
+                            }
+                          `}
                         >
-                          <ChevronRight className="w-4 h-4" />
-                        </motion.div>
-                      )
-                    )}
+                          <div className="flex items-center space-x-2">
+                            <span className={`
+                              transition-transform duration-200
+                              ${isActive ? 'scale-110' : 'group-hover:scale-110'}
+                            `}>
+                              {item.icon}
+                            </span>
+                            <span className="font-medium">{item.name}</span>
+                          </div>
 
-                    {isActive && (
-                      <motion.div
-                        layoutId="activeTab"
-                        className="absolute inset-0 bg-secondary rounded-lg -z-10"
-                        transition={{ type: 'spring', stiffness: 500, damping: 30 }}
-                      />
-                    )}
-                  </Link>
-                </motion.li>
-              );
-            })}
-          </ul>
+                          {item.badge && (
+                            <span className={`
+                              text-xs px-2 py-0.5 rounded-full font-medium
+                              ${
+                                isActive
+                                  ? 'bg-white/20 text-white'
+                                  : 'bg-primary/10 text-primary'
+                              }
+                            `}>
+                              {item.badge}
+                            </span>
+                          )}
+                        </Link>
+                      </motion.li>
+                    );
+                  })}
+                </ul>
+              </div>
+            ))}
+          </div>
         </nav>
 
-        {/* Logout Button */}
-        <div className="p-4 border-t border-white/10">
+        {/* Settings & Logout Section */}
+        <div className="p-2 border-t border-gray-100 space-y-1">
+          <Link
+            href="/dashboard/settings"
+            onClick={() => setIsMobileMenuOpen(false)}
+            className={`
+              group flex items-center space-x-2 px-2 py-1.5 rounded-lg text-sm transition-all duration-200
+              ${
+                pathname === '/dashboard/settings'
+                  ? 'bg-primary text-white shadow-md shadow-primary/20'
+                  : 'text-gray-700 hover:bg-primary/10 hover:text-primary'
+              }
+            `}
+          >
+            <Settings className="w-4 h-4 group-hover:rotate-90 transition-transform duration-300" />
+            <span className="font-medium">Settings</span>
+          </Link>
+
           <motion.button
             whileHover={{ scale: 1.02 }}
             whileTap={{ scale: 0.98 }}
             onClick={handleLogout}
-            className="w-full flex items-center space-x-3 px-4 py-3 bg-red-500/20 hover:bg-red-500/30 text-white rounded-lg transition-all duration-300 group"
+            className="w-full flex items-center space-x-2 px-2 py-1.5 bg-red-50 hover:bg-red-100 text-red-600 rounded-lg transition-all duration-200 group text-sm"
           >
-            <LogOut className="w-5 h-5 group-hover:rotate-12 transition-transform" />
+            <LogOut className="w-4 h-4 group-hover:-translate-x-1 transition-transform" />
             <span className="font-medium">Logout</span>
           </motion.button>
         </div>
