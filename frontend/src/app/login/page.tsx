@@ -236,20 +236,20 @@ export default function LoginPage() {
           </motion.div>
 
           {/* Footer */}
-          <motion.div
+          <motion.p
             initial={{ opacity: 0 }}
             animate={{ opacity: 1 }}
             transition={{ delay: 0.8, duration: 0.5 }}
             className="mt-8 text-center text-sm text-gray-600"
           >
-            Don't have an account?{' '}
+            Don&apos;t have an account?{' '}
             <a
               href="#"
               className="text-primary hover:text-primary-dark font-semibold transition-colors"
             >
               Contact Administrator
             </a>
-          </motion.div>
+          </motion.p>
         </div>
 
         {/* Bottom Decoration */}

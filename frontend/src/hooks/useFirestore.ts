@@ -7,7 +7,7 @@
 
 'use client';
 
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useMemo } from 'react';
 import {
   collection,
   doc,
@@ -79,6 +79,9 @@ export function useCollection<T = DocumentData>(
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<Error | null>(null);
 
+  // Memoize constraints to avoid re-running effect on every render
+  const constraintsStr = useMemo(() => JSON.stringify(constraints), [constraints]);
+
   useEffect(() => {
     setLoading(true);
     const collectionRef = collection(db, collectionName);
@@ -102,7 +105,7 @@ export function useCollection<T = DocumentData>(
     );
 
     return () => unsubscribe();
-  }, [collectionName, JSON.stringify(constraints)]);
+  }, [collectionName, constraints, constraintsStr]);
 
   return { data, loading, error };
 }

@@ -7,7 +7,7 @@
  * It provides user information and authentication methods to all child components.
  */
 
-import React, { createContext, useContext, useEffect, useState } from 'react';
+import React, { createContext, useContext, useEffect, useState, useMemo } from 'react';
 import {
   User,
   signInWithEmailAndPassword,
@@ -57,16 +57,13 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
   // Dev bypass: when NEXT_PUBLIC_SKIP_AUTH is set to 'true' the app will use a
   // mocked user so you can view the dashboard UI without connecting to Firebase.
   const SKIP_AUTH = process.env.NEXT_PUBLIC_SKIP_AUTH === 'true';
-  const mockUser = {
+  const mockUser = useMemo(() => ({
     uid: 'dev',
     email: 'dev@local',
     displayName: 'Developer',
-  } as unknown as User;
+  } as unknown as User), []);
 
   // Monitor authentication state changes
-  // We intentionally omit `mockUser` from the deps because it's a constant used only
-  // for the development bypass. Disable the exhaustive-deps rule for this effect.
-  // eslint-disable-next-line react-hooks/exhaustive-deps
   useEffect(() => {
     if (SKIP_AUTH) {
       // Immediately set a mocked authenticated user for local development
@@ -83,7 +80,7 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
     });
 
     return unsubscribe;
-  }, [SKIP_AUTH]);
+  }, [SKIP_AUTH, mockUser]);
 
   // Login function
   const login = async (email: string, password: string): Promise<UserCredential> => {

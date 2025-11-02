@@ -89,18 +89,16 @@ export default function ComingSoon({
               <motion.div
                 key={i}
                 initial={{ opacity: 0, scale: 0 }}
-                animate={{ opacity: 1, scale: 1 }}
-                transition={{ delay: 0.7 + i * 0.1 }}
-                className="w-3 h-3 bg-primary rounded-full"
                 animate={{
+                  opacity: 1,
                   scale: [1, 1.2, 1],
-                  opacity: [0.5, 1, 0.5],
                 }}
                 transition={{
+                  delay: 0.7 + i * 0.1,
                   duration: 2,
                   repeat: Infinity,
-                  delay: i * 0.2,
                 }}
+                className="w-3 h-3 bg-primary rounded-full"
               />
             ))}
           </div>
