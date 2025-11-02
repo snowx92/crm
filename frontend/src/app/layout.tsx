@@ -16,6 +16,9 @@ const inter = Inter({ subsets: ['latin'] });
 export const metadata: Metadata = {
   title: 'Omena Agency CRM',
   description: 'Customer Relationship Management System for Omena Agency',
+  icons: {
+    icon: '/favicon.ico',
+  },
 };
 
 export default function RootLayout({

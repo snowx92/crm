@@ -14,6 +14,7 @@
 import { motion, AnimatePresence } from 'framer-motion';
 import Link from 'next/link';
 import { usePathname } from 'next/navigation';
+import Image from 'next/image';
 import {
   LayoutDashboard,
   Users,
@@ -173,16 +174,22 @@ export default function Sidebar() {
         className="fixed lg:sticky top-0 left-0 h-screen w-60 bg-white border-r border-gray-200 z-40 flex flex-col shadow-xl lg:shadow-none lg:translate-x-0 transition-transform duration-300"
       >
         {/* Logo Section */}
-        <div className="p-3 border-b border-gray-100">
+        <div className="p-4 border-b border-gray-100">
           <motion.div
             whileHover={{ scale: 1.02 }}
-            className="flex items-center space-x-2 cursor-pointer"
+            className="flex items-center space-x-3 cursor-pointer"
           >
-            <div className="w-9 h-9 bg-gradient-to-br from-primary to-primary-dark rounded-lg flex items-center justify-center shadow-md">
-              <Sparkles className="w-5 h-5 text-secondary" />
+            <div className="relative w-10 h-10 flex-shrink-0">
+              <Image
+                src="/Full-logo.png"
+                alt="Omena Agency Logo"
+                fill
+                className="object-contain"
+                priority
+              />
             </div>
-            <div>
-              <h2 className="text-base font-bold text-gray-900">Omena Agency</h2>
+            <div className="min-w-0 flex-1">
+              <h2 className="text-lg font-bold text-gray-900 truncate">Omena Agency</h2>
               <p className="text-xs text-gray-500">CRM Dashboard</p>
             </div>
           </motion.div>
